@@ -17,7 +17,7 @@ import org.opencv.imgproc.Imgproc;
 
 import android.util.Log;
 
-public class ColorBlobDetector {
+public class ScantronDetector {
     // Lower and Upper bounds for range checking in HSV color space
     private Scalar mLowerBound = new Scalar(0);
     private Scalar mUpperBound = new Scalar(0);
@@ -26,7 +26,9 @@ public class ColorBlobDetector {
     // Color radius for range checking in HSV color space
     private Scalar mColorRadius = new Scalar(0,50,50,0);
     private Mat mSpectrum = new Mat();
-    private List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
+    private MatOfPoint mContour = null;
+//    private static final int MIN_NULL_COUNT = 4;
+//    private int nullCount = 0;
 
     // Cache
     Mat mPyrDownMat = new Mat();
@@ -74,10 +76,11 @@ public class ColorBlobDetector {
     }
 
     public void process(Mat rgbaImage) {
-        Imgproc.pyrDown(rgbaImage, mPyrDownMat);
-        Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
+//        Imgproc.pyrDown(rgbaImage, mPyrDownMat);
+//        Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
 
-        Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
+//        Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
+        Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
 
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
@@ -86,47 +89,60 @@ public class ColorBlobDetector {
 
         Imgproc.findContours(mDilatedMask, contours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Find max contour area
-        double maxArea = 0;
-        Iterator<MatOfPoint> each = contours.iterator();
-        while (each.hasNext()) {
-            MatOfPoint wrapper = each.next();
-            double area = Imgproc.contourArea(wrapper);
-            if (area > maxArea)
-                maxArea = area;
-        }
 
         // Filter contours by area and resize to fit the original image size
-        mContours.clear();
-        each = contours.iterator();
+        List<MatOfPoint> goodContours = new ArrayList<MatOfPoint>();
+        Iterator<MatOfPoint> each = contours.iterator();
         while (each.hasNext()) {
             MatOfPoint contour = each.next();
-            if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
-                Core.multiply(contour, new Scalar(4,4), contour);
-                MatOfInt indices = new MatOfInt();
-                Imgproc.convexHull(contour, indices);
-                Point[] pts = new Point[(int)indices.size().height];
-                for(int i=0;i<pts.length;++i) {
-                	pts[i] = new Point();
-                }
-                MatOfPoint hull = new MatOfPoint(pts);
-                for(int j = 0; j < indices.size().height; j++){
-                    int index = (int) indices.get(j, 0)[0];
-                    hull.put(j, 0, contour.get(index, 0));
-                }
-                MatOfPoint2f hull2f = new MatOfPoint2f(hull.toArray());
-
-                Imgproc.approxPolyDP(hull2f, hull2f, 20.0, true);
-                hull = new MatOfPoint(hull2f.toArray());
-                Log.d("Num verts",""+hull.size().height + " from " + indices.size().height);
-                if(hull.size().height == 5.0) {
-                	mContours.add(hull);
-                }
+//            Core.multiply(contour, new Scalar(4,4), contour);
+            MatOfInt indices = new MatOfInt();
+            Imgproc.convexHull(contour, indices);
+            Point[] pts = new Point[(int)indices.size().height];
+            for(int i=0;i<pts.length;++i) {
+            	pts[i] = new Point();
             }
+            MatOfPoint hull = new MatOfPoint(pts);
+            for(int j = 0; j < indices.size().height; j++){
+                int index = (int) indices.get(j, 0)[0];
+                hull.put(j, 0, contour.get(index, 0));
+            }
+            MatOfPoint2f hull2f = new MatOfPoint2f(hull.toArray());
+
+            Imgproc.approxPolyDP(hull2f, hull2f, 15.0, true);
+            hull = new MatOfPoint(hull2f.toArray());
+            Log.d("Num verts",""+hull.size().height + " from " + indices.size().height);
+        	goodContours.add(hull);
+        }
+        // Find max contour area
+        double maxArea = 0;
+        MatOfPoint maxContour = null;
+        for(MatOfPoint contour:goodContours) {
+            double area = Math.abs(Imgproc.contourArea(contour));
+            if (maxContour == null || area > maxArea) {
+                maxArea = area;
+                maxContour = contour;
+            }
+        }
+//        if(maxContour != null) {
+    	mContour = maxContour;
+//        	nullCount = 0;
+//        } else {
+//    		nullCount++;
+//        	if(nullCount > MIN_NULL_COUNT) {
+//        		mContour = null;
+//        	}
+//        }
+        if(mContour != null) {
+//        	List<int[]> parallelPairs;
+//        	int longestEdge = -1;
+//        	double edgeSlope = 0;
+//        	int edgeLength;
+        	
         }
     }
 
-    public List<MatOfPoint> getContours() {
-        return mContours;
+    public MatOfPoint getContour() {
+        return mContour;
     }
 }
