@@ -1,6 +1,8 @@
 int attr buttonBarButtonStyle 0x7f010003
 int attr buttonBarStyle 0x7f010002
 int attr camera_id 0x7f010001
+int attr customFontButton 0x7f010005
+int attr customFontText 0x7f010004
 int attr show_fps 0x7f010000
 int color black_overlay 0x7f050000
 int drawable icon 0x7f020000
@@ -24,9 +26,13 @@ int style ButtonBar 0x7f070001
 int style ButtonBarButton 0x7f070002
 int style FullscreenActionBarStyle 0x7f070003
 int style FullscreenTheme 0x7f070000
+int[] styleable Button2 { 0x7f010005 }
+int styleable Button2_customFontButton 0
 int[] styleable ButtonBarContainerTheme { 0x7f010002, 0x7f010003 }
 int styleable ButtonBarContainerTheme_buttonBarButtonStyle 1
 int styleable ButtonBarContainerTheme_buttonBarStyle 0
 int[] styleable CameraBridgeViewBase { 0x7f010000, 0x7f010001 }
 int styleable CameraBridgeViewBase_camera_id 1
 int styleable CameraBridgeViewBase_show_fps 0
+int[] styleable TextView2 { 0x7f010004 }
+int styleable TextView2_customFontText 0
