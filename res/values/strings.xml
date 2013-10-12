@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">QuickTron</string>
+    <string name="title_activity_launch_screen">LaunchScreen</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">QUICK-TRON</string>
+ 	<string name="scan_tests_label">Scan\nTests</string>
+	<string name="view_tests_label">View All\nTests</string>
 </resources>
