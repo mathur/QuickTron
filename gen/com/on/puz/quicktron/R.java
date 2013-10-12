@@ -9,6 +9,14 @@ package com.on.puz.quicktron;
 
 public final class R {
     public static final class attr {
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int buttonBarButtonStyle=0x7f010003;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int buttonBarStyle=0x7f010002;
         /** <p>May be an integer value, such as "<code>100</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -36,22 +44,85 @@ containing a value of this type.
          */
         public static final int show_fps=0x7f010000;
     }
+    public static final class color {
+        public static final int black_overlay=0x7f050000;
+    }
     public static final class drawable {
         public static final int icon=0x7f020000;
     }
     public static final class id {
         public static final int any=0x7f040000;
         public static final int back=0x7f040001;
-        public static final int color_blob_detection_activity_surface_view=0x7f040003;
+        public static final int color_blob_detection_activity_surface_view=0x7f040007;
         public static final int front=0x7f040002;
+        public static final int fullscreen_content=0x7f040003;
+        public static final int fullscreen_content_controls=0x7f040004;
+        public static final int scan_test_button=0x7f040006;
+        public static final int view_test_button=0x7f040005;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
+        public static final int activity_launch_screen=0x7f030000;
+        public static final int activity_main=0x7f030001;
     }
     public static final class string {
-        public static final int app_name=0x7f050000;
+        public static final int app_name=0x7f060000;
+        public static final int dummy_button=0x7f060002;
+        public static final int dummy_content=0x7f060003;
+        public static final int scan_tests_label=0x7f060004;
+        public static final int title_activity_launch_screen=0x7f060001;
+        public static final int view_tests_label=0x7f060005;
+    }
+    public static final class style {
+        /**  Backward-compatible version of ?android:attr/buttonBarStyle 
+         */
+        public static final int ButtonBar=0x7f070001;
+        /**  Backward-compatible version of ?android:attr/buttonBarButtonStyle 
+         */
+        public static final int ButtonBarButton=0x7f070002;
+        public static final int FullscreenActionBarStyle=0x7f070003;
+        public static final int FullscreenTheme=0x7f070000;
     }
     public static final class styleable {
+        /** 
+         Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels.
+    
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #ButtonBarContainerTheme_buttonBarButtonStyle com.on.puz.quicktron:buttonBarButtonStyle}</code></td><td></td></tr>
+           <tr><td><code>{@link #ButtonBarContainerTheme_buttonBarStyle com.on.puz.quicktron:buttonBarStyle}</code></td><td></td></tr>
+           </table>
+           @see #ButtonBarContainerTheme_buttonBarButtonStyle
+           @see #ButtonBarContainerTheme_buttonBarStyle
+         */
+        public static final int[] ButtonBarContainerTheme = {
+            0x7f010002, 0x7f010003
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.on.puz.quicktron.R.attr#buttonBarButtonStyle}
+          attribute's value can be found in the {@link #ButtonBarContainerTheme} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name android:buttonBarButtonStyle
+        */
+        public static final int ButtonBarContainerTheme_buttonBarButtonStyle = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.on.puz.quicktron.R.attr#buttonBarStyle}
+          attribute's value can be found in the {@link #ButtonBarContainerTheme} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name android:buttonBarStyle
+        */
+        public static final int ButtonBarContainerTheme_buttonBarStyle = 0;
         /** Attributes that can be used with a CameraBridgeViewBase.
            <p>Includes the following attributes:</p>
            <table>
@@ -88,7 +159,7 @@ containing a value of this type.
 <tr><td><code>back</code></td><td>99</td><td></td></tr>
 <tr><td><code>front</code></td><td>98</td><td></td></tr>
 </table>
-          @attr name com.on.puz.quicktron:camera_id
+          @attr name android:camera_id
         */
         public static final int CameraBridgeViewBase_camera_id = 1;
         /**
@@ -102,7 +173,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.on.puz.quicktron:show_fps
+          @attr name android:show_fps
         */
         public static final int CameraBridgeViewBase_show_fps = 0;
     };
