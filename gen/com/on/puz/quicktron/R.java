@@ -79,7 +79,6 @@ containing a value of this type.
         /**  Backward-compatible version of ?android:attr/buttonBarButtonStyle 
          */
         public static final int ButtonBarButton=0x7f070002;
-        public static final int FullscreenActionBarStyle=0x7f070003;
         public static final int FullscreenTheme=0x7f070000;
     }
     public static final class styleable {
@@ -110,7 +109,7 @@ containing a value of this type.
 
           <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
-          @attr name android:buttonBarButtonStyle
+          @attr name com.on.puz.quicktron:buttonBarButtonStyle
         */
         public static final int ButtonBarContainerTheme_buttonBarButtonStyle = 1;
         /**
@@ -120,7 +119,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 
           <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
-          @attr name android:buttonBarStyle
+          @attr name com.on.puz.quicktron:buttonBarStyle
         */
         public static final int ButtonBarContainerTheme_buttonBarStyle = 0;
         /** Attributes that can be used with a CameraBridgeViewBase.
@@ -159,7 +158,7 @@ containing a value of this type.
 <tr><td><code>back</code></td><td>99</td><td></td></tr>
 <tr><td><code>front</code></td><td>98</td><td></td></tr>
 </table>
-          @attr name android:camera_id
+          @attr name com.on.puz.quicktron:camera_id
         */
         public static final int CameraBridgeViewBase_camera_id = 1;
         /**
@@ -173,7 +172,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:show_fps
+          @attr name com.on.puz.quicktron:show_fps
         */
         public static final int CameraBridgeViewBase_show_fps = 0;
     };
