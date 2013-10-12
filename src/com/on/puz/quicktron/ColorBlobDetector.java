@@ -7,6 +7,7 @@ import java.util.List;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -97,6 +98,10 @@ public class ColorBlobDetector {
             MatOfPoint contour = each.next();
             if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
                 Core.multiply(contour, new Scalar(4,4), contour);
+                /*
+                MatOfInt indices = new MatOfInt();
+                MatOfPoint hull = new MatOfPoint();
+                Imgproc.convexHull(contour, indices);*/
                 mContours.add(contour);
             }
         }
