@@ -35,6 +35,22 @@ containing a value of this type.
 </table>
          */
         public static final int camera_id=0x7f010001;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int customFontButton=0x7f010005;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int customFontText=0x7f010004;
         /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -82,6 +98,33 @@ containing a value of this type.
         public static final int FullscreenTheme=0x7f070000;
     }
     public static final class styleable {
+        /** Attributes that can be used with a Button2.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #Button2_customFontButton com.on.puz.quicktron:customFontButton}</code></td><td></td></tr>
+           </table>
+           @see #Button2_customFontButton
+         */
+        public static final int[] Button2 = {
+            0x7f010005
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.on.puz.quicktron.R.attr#customFontButton}
+          attribute's value can be found in the {@link #Button2} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:customFontButton
+        */
+        public static final int Button2_customFontButton = 0;
         /** 
          Declare custom theme attributes that allow changing which styles are
          used for button bars depending on the API level.
@@ -175,5 +218,32 @@ containing a value of this type.
           @attr name com.on.puz.quicktron:show_fps
         */
         public static final int CameraBridgeViewBase_show_fps = 0;
+        /** Attributes that can be used with a TextView2.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #TextView2_customFontText com.on.puz.quicktron:customFontText}</code></td><td></td></tr>
+           </table>
+           @see #TextView2_customFontText
+         */
+        public static final int[] TextView2 = {
+            0x7f010004
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.on.puz.quicktron.R.attr#customFontText}
+          attribute's value can be found in the {@link #TextView2} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:customFontText
+        */
+        public static final int TextView2_customFontText = 0;
     };
 }
