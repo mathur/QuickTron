@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class Button2 extends Button {
-    private static final String TAG = "TextView";
+    private static final String TAG = "Button";
     private static final Hashtable<String, Typeface> cache = new Hashtable<String, Typeface>();
 
     public Button2(Context context) {
