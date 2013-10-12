@@ -9,8 +9,11 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+
+import android.util.Log;
 
 public class ColorBlobDetector {
     // Lower and Upper bounds for range checking in HSV color space
@@ -98,11 +101,19 @@ public class ColorBlobDetector {
             MatOfPoint contour = each.next();
             if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
                 Core.multiply(contour, new Scalar(4,4), contour);
-                /*
                 MatOfInt indices = new MatOfInt();
-                MatOfPoint hull = new MatOfPoint();
-                Imgproc.convexHull(contour, indices);*/
-                mContours.add(contour);
+                Imgproc.convexHull(contour, indices);
+                Point[] pts = new Point[(int)indices.size().height];
+                for(int i=0;i<pts.length;++i) {
+                	pts[i] = new Point();
+                }
+                MatOfPoint hull = new MatOfPoint(pts);
+                for(int j = 0; j < indices.size().height; j++){
+                    int index = (int) indices.get(j, 0)[0];
+                    hull.put(j, 0, contour.get(index, 0));
+                }
+                Log.d("Num verts",""+hull.size().height + " from " + indices.size().height);
+                mContours.add(hull);
             }
         }
     }
