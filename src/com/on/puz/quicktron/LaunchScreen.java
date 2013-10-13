@@ -17,6 +17,7 @@ public class LaunchScreen extends Activity {
 		final AlertDialog.Builder newName = new AlertDialog.Builder(this);
 		newName.setTitle("New Test Name");
 		newName.setView(input);
+        input.setText("New Test");
 		AlertDialog alert = newName.create();
 		alert.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
 	        public void onClick(final DialogInterface dialog, final int whichButton) {
