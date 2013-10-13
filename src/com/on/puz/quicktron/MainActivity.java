@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
     
-    protected boolean 			 pageFinished=false;
+    protected boolean 			 pageFinished=true;
     private CameraBridgeViewBase mOpenCvCameraView;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
@@ -207,11 +207,13 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         return new Scalar(pointMatRgba.get(0, 0));
     }
-    public void nextPage(){
+    public void nextPage(View v){
+		Log.wtf("BUTTON", "button pressed");
     	if (pageFinished)
     	{
     		pageFinished=false;
-    		//SEND INFO TO DATABASE
+    		recreate();
+    		
     	}
     	return;
     }
