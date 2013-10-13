@@ -8,12 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
 public class LaunchScreen extends Activity {
 
 	private static final String TEST_NEW = "com.on.puz.quicktron.TEST_NEW";
