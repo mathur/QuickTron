@@ -403,7 +403,9 @@ public class ScantronDetector {
         	return true;
         }
 	}
-
+	public static void markStudentTest(Mat mRgba, List<Point> points, String studentTestResult) {
+		
+	}
 	private double _cross(Point a,Point b) {
     	return (a.x*b.y-a.y*b.x);
     }
