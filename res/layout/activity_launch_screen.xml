@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/view_tests_label" 
+                android:textSize="20sp"
                 android:onClick="viewTestsList"
                     />
             <Button
@@ -56,28 +57,43 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textSize="20sp"
                 android:text="@string/new_test_label" 
                 android:onClick="scanNewTest" />
             
         </LinearLayout>
+		<LinearLayout
+            android:id="@+id/fullscreen_content_controls2"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent" >
+        <Button
+            style="?buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Directions"
+            android:textSize="20sp"
+            android:id="@+id/btnDirections"
+            android:layout_gravity="left|top"
+            android:onClick="showDirections"
+            android:singleLine="false"/>
 
         <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Directions"
-                android:id="@+id/btnDirections"
-                android:layout_gravity="left|top"
-                android:onClick="showDirections"
-                android:singleLine="false"/>
-
-        <Button
-                android:layout_width="wrap_content"
+            style="?buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="About"
+                android:textSize="20sp"
                 android:id="@+id/btnAbout"
                 android:layout_gravity="right|top"
                 android:onClick="clickAbout"/>
-
+  		</LinearLayout>	
         <!-- <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
