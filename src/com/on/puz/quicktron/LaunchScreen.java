@@ -10,8 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class LaunchScreen extends Activity {
-
-
+	
 	public void scanNewTest(View view)
 	{
 		final EditText input = new EditText(this);
@@ -49,7 +48,6 @@ public class LaunchScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_launch_screen);
 	}
 }

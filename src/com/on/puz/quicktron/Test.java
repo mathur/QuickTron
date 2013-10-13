@@ -1,10 +1,13 @@
 package com.on.puz.quicktron;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Test {
     private int id;
     private String testName;
     private int answerKey;
-    private String[] scores;
+    private ArrayList<String> scores;
 
     /*
      * Constructor that sets up a test of name null
@@ -18,7 +21,7 @@ public class Test {
     /*
      * Constructor that sets up a test with specified parameters
      */
-    public Test(String newTestName, int isAnswerKey, String[] scoreList) {
+    public Test(String newTestName, int isAnswerKey, ArrayList<String> scoreList) {
         super();
         this.testName = newTestName;
         this.answerKey = isAnswerKey;
@@ -89,10 +92,10 @@ public class Test {
      */
     public String getScoresString() {
         String str = "";
-        for (int i = 0;i<scores.length; i++) {
-            str = str+scores[i];
+        for (int i = 0;i<scores.size(); i++) {
+            str = str+scores.get(i);
             // Do not append comma at the end of last element
-            if(i<scores.length-1){
+            if(i<scores.size()-1){
                 str = str+",";
             }
         }
@@ -105,7 +108,10 @@ public class Test {
      * @param newScores is the new set of scores to add to this item object, as a string
      */
     public void setScores(String newScores) {
-        String[] arr = newScores.split(",");
+        ArrayList<String> arr = (ArrayList<String>) Arrays.asList(newScores.split(","));
         this.scores = arr;
+    }
+    public String toString(){
+    	return testName;
     }
 }

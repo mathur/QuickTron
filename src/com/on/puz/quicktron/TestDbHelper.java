@@ -25,14 +25,26 @@ public class TestDbHelper extends SQLiteOpenHelper {
     private static final String KEY_ANSWERKEY = "isAnswerKey";
     private static final String KEY_TESTNAME = "testName";
     private static final String KEY_SCORES = "scores";
-
+    
+    private static TestDbHelper dbInstance = null; 
     /*
      * Constructor that sets up the TestDbHelper object
      *
      * @param context provides Android access to the general information about the app, in this case
      * it is provided to the database
      */
-    public TestDbHelper(Context context) {
+    public static TestDbHelper getInstance(Context context) {
+        
+        // Use the application context, which will ensure that you 
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (dbInstance == null) {
+        	dbInstance = new TestDbHelper(context.getApplicationContext());
+        }
+        return dbInstance;
+      }
+
+    private TestDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

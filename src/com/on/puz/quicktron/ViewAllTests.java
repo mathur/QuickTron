@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class ViewAllTests extends Activity {
 	
-	ArrayAdapter<String> testItems;
+	ArrayAdapter<Test> testItems;
 	EditText testNameInput;
 	Button addTestButton;
 	ListView listView;
@@ -28,14 +28,17 @@ public class ViewAllTests extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		 setContentView(R.layout.activity_view_all_tests);
+		 TestDbHelper db = TestDbHelper.getInstance(getApplicationContext());
 		//testNameInput = (EditText)findViewById(R.id.input_test_name);
 		addTestButton = (Button)findViewById(R.id.add_test_button);
         listView = (ListView)findViewById(R.id.all_tests);
-        ArrayList<String> sample = new ArrayList<String>();
-        sample.add("blah");
-        sample.add("blah2");
-        sample.add("blah3");
-        testItems = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        ArrayList<Test> initial = db.getAllTests();
+       // ArrayList<Test> initial = new ArrayList<Test>();
+        ArrayList<String> scores = new ArrayList<String>();
+        scores.add("3u42893");
+        scores.add("2481894");
+        //initial.add(new Test("test",0, scores));
+        testItems = new ArrayAdapter<Test>(this, android.R.layout.simple_list_item_1, initial);
         addItemsFromDb();
         listView.setAdapter(testItems);
         listView.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -55,7 +58,7 @@ public class ViewAllTests extends Activity {
 		//dummy data:
 		for(int i = 0; i < 20; i++)
 		{
-			testItems.add("test " + (i + 1));
+			//testItems.add("test " + (i + 1));
 		}
 		testItems.notifyDataSetChanged();
 	}
