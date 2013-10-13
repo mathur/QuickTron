@@ -27,7 +27,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
     private static final String KEY_SCORES = "scores";
 
     /*
-     * Constructor that sets up the ScoreDbHelper object
+     * Constructor that sets up the TestDbHelper object
      *
      * @param context provides Android access to the general information about the app, in this case
      * it is provided to the database

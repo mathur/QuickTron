@@ -15,6 +15,9 @@ public class Test {
         this.answerKey=0;
     }
 
+    /*
+     * Constructor that sets up a test with specified parameters
+     */
     public Test(String newTestName, int isAnswerKey, String[] scoreList) {
         super();
         this.testName = newTestName;
@@ -52,25 +55,27 @@ public class Test {
     /*
      * Method that sets the name of an Item object
      *
-     * @param itemName is the desired name of the Item object currently being processed
+     * @param newTestName is the desired name of the Test object currently being processed
      */
     public void setTestName(String newTestName) {
         this.testName = newTestName;
     }
 
     /*
-     * Method to get the name of a specific Test object
+     * Method to get whether it is an answer key or not
      *
-     * @return the name of the object as a string
+     * 0 is no, 1 is yes
+     *
+     * @return 0 if it is not an answer key, 1 if it is
      */
     public int isAnswerKey(){
         return answerKey;
     }
 
     /*
-     * Method that sets the name of an Item object
+     * Method that sets if it is an answer key or not
      *
-     * @param itemName is the desired name of the Item object currently being processed
+     * @param ifAnswerKey is an answer key (0 = no, 1 = yes)
      */
     public void setIsAnswerKey(int ifAnswerKey) {
         this.answerKey = ifAnswerKey;
@@ -80,7 +85,7 @@ public class Test {
     /*
      * Method to get the name of a specific Test object
      *
-     * @return the name of the object as a string
+     * @return the scores for each question, with each question being part of the string
      */
     public String getScoresString() {
         String str = "";
@@ -95,9 +100,9 @@ public class Test {
     }
 
     /*
-     * Method that sets the name of an Item object
+     * Method that sets the name of an Test object
      *
-     * @param itemName is the desired name of the Item object currently being processed
+     * @param newScores is the new set of scores to add to this item object, as a string
      */
     public void setScores(String newScores) {
         String[] arr = newScores.split(",");
