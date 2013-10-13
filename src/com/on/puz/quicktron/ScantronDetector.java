@@ -125,13 +125,20 @@ public class ScantronDetector {
         // Find max contour area
         double maxArea = 0;
         MatOfPoint maxContour = null;
+//        int nCentered = 0;
         for(MatOfPoint contour:goodContours) {
             double area = Math.abs(Imgproc.contourArea(contour));
-            if (maxContour == null || area > maxArea) {
+//            boolean centered = (Imgproc.pointPolygonTest(new MatOfPoint2f(contour.toArray()), new Point(rgbaImage.cols()/2.0,rgbaImage.rows()/2.0), false) >= 0);
+            if(maxContour == null || area > maxArea/* || centered*/) {
                 maxArea = area;
                 maxContour = contour;
             }
+//            if(centered) {
+//            	nCentered++;
+//            }
         }
+//        Log.d("Center","("+rgbaImage.cols()/2.0+","+rgbaImage.rows()/2.0+")");
+//        Log.d("nCentered/nContours",nCentered+"/"+goodContours.size());
         mContour = (maxContour != null) ? maxContour.toArray() :
         								  null;
         if(mContour != null) {
@@ -291,6 +298,11 @@ public class ScantronDetector {
 	        	contour[i] = _intersect(mContour[edges[prevI]],mContour[(edges[prevI]+1)%mContour.length],
 	        							 mContour[edges[i]],mContour[(edges[i]+1)%mContour.length]);
 	        }
+	        Point first = contour[0];
+	        for(int i=0;i<contour.length-1;++i) {
+	        	contour[i] = contour[i+1];
+	        }
+	        contour[contour.length-1] = first;
 	        mContour = contour;
             mRows = processRect(contour);
         }
@@ -308,26 +320,39 @@ public class ScantronDetector {
     	
     	Point origin = reference[0];
       	int numRows = 50;
-    	double rdistance = 0.36842105263; 
-    	double sdistance = 0.01714285714; 
+    	double rdistance = 0.43442105263; 
+    	double sdistance = 0.1634285714; 
 
     	double sheight = 0.01514285714; 
     	double rwidth  = 0.36842105263;
     	
-    	double sstep = 0.01714285714;
+    	double sstep = 0.01504285714;
 
     	List<Point[]> rectPoints = new ArrayList<Point[]>();
     	
     	for(int i = 0; i < numRows;i++) {
-        	Point[] points = new Point[4];
-        	points[0] = new Point(origin.x+rdistance*r.x+sdistance*s.x+sstep*i*s.x,
-        						  origin.y+rdistance*r.y+sdistance*s.y+sstep*i*s.y);	
-        	points[1] = new Point(points[0].x+sheight*s.x,
-        						  points[0].y+sheight*s.y);
-        	points[2] = new Point(points[0].x+sheight*s.x+rwidth*r.x,
-        						  points[0].y+sheight*s.y+rwidth*r.y);	
-        	points[3] = new Point(points[0].x+rwidth*r.x,
-					  			  points[0].y+rwidth*r.y);
+    		double row1Factor = rdistance,
+    			   row2Factor = rdistance+rwidth,
+    			   col1Factor = sdistance+sstep*i,
+    			   col2Factor = sdistance+sstep*i+sheight;
+    		double[][] factors = new double[4][];
+    		Point[] row1 = new Point[]{ new Point((1-row1Factor)*reference[0].x+row1Factor*reference[3].x,
+    									 	      (1-row1Factor)*reference[0].y+row1Factor*reference[3].y),
+								        new Point((1-row1Factor)*reference[1].x+row1Factor*reference[2].x,
+										          (1-row1Factor)*reference[1].y+row1Factor*reference[2].y) };
+    		Point[] row2 = new Point[]{ new Point((1-row2Factor)*reference[0].x+row2Factor*reference[3].x,
+										 	      (1-row2Factor)*reference[0].y+row2Factor*reference[3].y),
+								        new Point((1-row2Factor)*reference[1].x+row2Factor*reference[2].x,
+										          (1-row2Factor)*reference[1].y+row2Factor*reference[2].y) };
+        	Point[] points = new Point[4]; 
+        	points[0] = new Point((1-col1Factor)*row1[0].x+col1Factor*row1[1].x,
+        						  (1-col1Factor)*row1[0].y+col1Factor*row1[1].y);
+        	points[1] = new Point((1-col2Factor)*row1[0].x+col2Factor*row1[1].x,
+					  			  (1-col2Factor)*row1[0].y+col2Factor*row1[1].y);
+        	points[2] = new Point((1-col2Factor)*row2[0].x+col2Factor*row2[1].x,
+					  			  (1-col2Factor)*row2[0].y+col2Factor*row2[1].y);
+        	points[3] = new Point((1-col1Factor)*row2[0].x+col1Factor*row2[1].x,
+					  			  (1-col1Factor)*row2[0].y+col1Factor*row2[1].y);
     		rectPoints.add(points);
 
 //    		rectPoints.add(i, new MatOfPoint(points));
