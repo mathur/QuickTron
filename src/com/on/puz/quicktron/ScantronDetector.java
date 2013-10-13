@@ -21,7 +21,9 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.utils.Converters;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ScantronDetector {
     // Lower and Upper bounds for range checking in HSV color space
@@ -315,7 +317,10 @@ public class ScantronDetector {
 
         }
     }
-    public void checkAnswers() { 
+    public void checkAnswers(Context c) {
+    	if(mRows == null) {
+    		return;
+    	}
     	Point[][] p = new Point[50][5];
     	for(int i = 0; i < mRows.size(); i++) {
     		for(int j = 0; j < mRows.get(i).length; j++) {
@@ -334,6 +339,7 @@ public class ScantronDetector {
     	Log.d("mxxsr",""+studentResponse);
     	Log.d("mxxs",""+studentTestResult);
     	Log.d("mxxscore",""+score);
+    	Toast.makeText(c, ""+(score*100), Toast.LENGTH_SHORT).show();
 
         final double actualScore = score;
         String scoreReport = "";
@@ -583,12 +589,12 @@ public class ScantronDetector {
     	Point origin = reference[0];
       	int numRows = 50;
     	double rdistance = 0.43442105263; 
-    	double sdistance = 0.1634285714; 
+    	double sdistance = 0.1404285714; 
 
     	double sheight = 0.01514285714; 
     	double rwidth  = 0.36842105263;
     	
-    	double sstep = 0.01604285714;
+    	double sstep = 0.01534285714;
 
     	List<Point[]> rectPoints = new ArrayList<Point[]>();
     	
@@ -631,38 +637,70 @@ public class ScantronDetector {
 		boolean[][] answerFill = new boolean[50][5];
 		
 		for(int i = 0; i < answers.length; i++) {
-			double x = answers[i][0].x,y = answers[i][0].y;
-			double x1 = answers[i][1].x, y1 = answers[i][3].y;
-			if(answers[i][0].x<=0) x=0;
-			if(answers[i][0].x>=hsv.size().width) x = hsv.size().width-1;
-			if(answers[i][0].y<=0) y=0;
-			if(answers[i][0].y>=hsv.size().height) y = hsv.size().height-1;
+			double x = 0,y = 0;
+			double x1 = 0, y1 = 0;
+			for(int j=0;j<answers[i].length;++j) {
+				Point p = answers[i][j];
+				if(p == null) {
+					continue;
+				}
+				if(j == 0 || p.x < x) {
+					x = p.x;
+				}
+				if(j == 0 || p.x > x1) {
+					x1 = p.x;
+				}
+				if(j == 0 || p.y < y) {
+					y = p.y;
+				}
+				if(j == 0 || p.y > y1) {
+					y1 = p.y;
+				}
+			}
+			if(x<=0) x=0;
+			if(x>=hsv.size().width) x = hsv.size().width-1;
+			if(y<=0) y=0;
+			if(y>=hsv.size().height) y = hsv.size().height-1;
+			if(x1<=0) x1=0;
+			if(x1>=hsv.size().width) x1 = hsv.size().width-1;
+			if(y1<=0) y1=0;
+			if(y1>=hsv.size().height) y1 = hsv.size().height-1;
+			
 			
 			double length = Math.abs(x - x1);//might not be used???wtflol
 			double width = Math.abs(y - y1);
 			double xoffset = (x1 - x)/5;
 			double yoffset = (y1 - y)/5;
 			
+			double[] intensities = new double[5];
 			for(int j = 0; j < 5; j++) { 
 				List<Point> r = new ArrayList<Point>();
 				
 				Log.d("mhsvsize",""+hsv.size().toString());
 				r.add(new Point(x + xoffset*j, y + yoffset*j));
+				r.add(new Point(x + xoffset*(j+1), y + yoffset*j));
 				r.add(new Point(x + xoffset*(j+1), y + yoffset*(j+1)));
-				r.add(new Point(x + xoffset*(j+1), y + yoffset*(j+1)-width));
-				r.add(new Point(x + xoffset*j, y + xoffset*j-width));
-				answerFill[i][j] = checkFill(r, hsv);
+				r.add(new Point(x + xoffset*j, y + yoffset*(j+1))); 
+				intensities[j] = checkFill(r, hsv);
+				Log.d("intensity " + j,""+intensities[j]);
+			}
+			double max = 0;
+			for(int j=0;j<5;++j) {
+				if(j==0 || intensities[j] > max) {
+					max = intensities[j];
+				}
+			}
+			for(int j=0;j<5;++j) {
+				answerFill[i][j] = (max >= 1.1*intensities[j]);
 			}
 		}
 		
     	return answerFill;
     	
     }
-    private boolean checkFill(List<Point> r, Mat hsv) {
-    	Point[] p = new Point[4];
-    	for(int i = 0; i < 4; i++) {
-    		p[i] = new Point(r.get(i).x,r.get(i).y);
-    	}
+    private double checkFill(List<Point> r, Mat hsv) {
+    	Point[] p = new Point[r.size()];
+    	r.toArray(p);
     	MatOfPoint m = new MatOfPoint(p);
     	Log.d("matofp", p[0].toString()+" "+p[1].toString()+" "+p[2].toString()+" "+p[3].toString());
         Rect rect = Imgproc.boundingRect(m);
@@ -674,11 +712,15 @@ public class ScantronDetector {
             mBlobColorHsv.val[i] /= pointCount;
         }
         Log.d("mcolor",mBlobColorHsv.toString());
-        if(mBlobColorHsv.val[2] >= mLowerBound.val[2]+30 && mBlobColorHsv.val[2] <= mUpperBound.val[2]) {
-        	return false;
-        } else {
-        	return true;
-        }
+//        Core.inRange(touchedRegionHsv, new Scalar(0), new Scalar(255,255,mBlobColorHsv.val[2],255), mMask);
+//        double area = 0;
+//        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//        Imgproc.findContours(mMask,contours,mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+//        for(MatOfPoint contour:contours) {
+//        	area += Math.abs(Imgproc.contourArea(contour));
+//        }
+//        return area;
+          return mBlobColorHsv.val[2];
 	}
 	public static void markStudentTest(Mat mRgba, Point[][] answers, String studentTestResult) {
 		for(int i = 0; i < answers.length; i++) {
