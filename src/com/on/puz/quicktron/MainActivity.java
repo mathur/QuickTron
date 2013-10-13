@@ -209,6 +209,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     }
     public void nextPage(View v){
 		Log.wtf("BUTTON", "button pressed");
+		mDetector.checkAnswers();
     	if (pageFinished)
     	{
     		pageFinished=false;
