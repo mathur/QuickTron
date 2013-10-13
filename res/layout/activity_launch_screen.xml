@@ -69,8 +69,7 @@
                 android:id="@+id/btnSendGrid"
                 android:layout_gravity="center_horizontal|top"
                 android:singleLine="false"
-                android:onClick="sendSendGrid"/>
-        -->
+                android:onClick="sendSendGrid"/> -->
     </FrameLayout>
 
 </FrameLayout>

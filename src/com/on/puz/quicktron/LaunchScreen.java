@@ -52,16 +52,26 @@ public class LaunchScreen extends Activity {
 
     public void sendSendGrid(View view)
     {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
         SendGrid sendgrid = new SendGrid("rohan32", "hackru");
         sendgrid.addTo("rohanmathur34@gmail.com");
         sendgrid.setFrom("rohan@rmathur.com");
         sendgrid.setSubject("Subj");
         sendgrid.setText("Hi");
 
-        sendgrid.send();
+        final SendGrid sendgriddone = sendgrid;
+
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    sendgriddone.send();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
     }
 
 	@Override
