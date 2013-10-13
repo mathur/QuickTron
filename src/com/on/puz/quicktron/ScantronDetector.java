@@ -369,7 +369,7 @@ public class ScantronDetector {
 		boolean[][] answerFill = new boolean[50][5];
 		
 		for(int i = 0; i < answers.length; i++) {
-			double length = Math.abs(answers[i][0].x - answers[i][1].x);
+			double length = Math.abs(answers[i][0].x - answers[i][1].x);//might not be used???wtflol
 			double width = Math.abs(answers[i][0].y - answers[i][3].y);
 			double xoffset = (answers[i][1].x - answers[i][0].x)/5;
 			double yoffset = (answers[i][1].y) - answers[i][0].y/5;
