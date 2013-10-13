@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.github.sendgrid.SendGrid;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -328,6 +330,35 @@ public class ScantronDetector {
 	        	Log.d("mxxsr",""+studentResponse);
 	        	Log.d("mxxs",""+studentTestResult);
 	        	Log.d("mxxscore",""+score);
+
+                final double actualScore = score;
+                String scoreReport = "";
+                for(int i = 0; i < studentTestResult.length(); i++){
+                    scoreReport = scoreReport + "\n" + (i+1) + ". " + studentTestResult.charAt(i);
+                }
+
+                final String actualStudentTestResult = scoreReport;
+
+                Thread thread = new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                    try {
+                        SendGrid sendgrid = new SendGrid("rohan32", "hackru");
+                        sendgrid.addTo("rohanmathur34@gmail.com");
+                        sendgrid.setFrom("hackru@rutgers.edu");
+                        sendgrid.setSubject("Results of your test");
+                        sendgrid.setText("Hello!\n" +
+                                "On your test, you received a score of " + (actualScore * 100) + "%.\n" +
+                                "Please find a score report located below:\n\n" +
+                                actualStudentTestResult + "\n\nThanks for using QuickTron!");
+                        sendgrid.send();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    }
+                });
+
+                thread.start();
 	        }
 //	        mRows = new ArrayList<Point[]>();
 //            List<Point[]> blackLines = processRect(contour,mHsvMat);

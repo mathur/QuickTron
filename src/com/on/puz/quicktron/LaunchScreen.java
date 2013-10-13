@@ -1,7 +1,5 @@
 package com.on.puz.quicktron;
 
-import com.github.sendgrid.SendGrid;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -46,27 +44,6 @@ public class LaunchScreen extends Activity {
 		Intent intent = new Intent(this, ViewAllTests.class);
         startActivity(intent);
 	}
-
-    public void sendSendGrid(View view)
-    {
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    SendGrid sendgrid = new SendGrid("rohan32", "hackru");
-                    sendgrid.addTo("rohanmathur34@gmail.com");
-                    sendgrid.setFrom("rohan@rmathur.com");
-                    sendgrid.setSubject("Subj");
-                    sendgrid.setText("Hi");
-                    sendgrid.send();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        thread.start();
-    }
 
     public void showDirections(View view)
     {
