@@ -1,6 +1,7 @@
 package com.on.puz.quicktron;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,9 +22,17 @@ public class ViewAllTests extends Activity {
 	ArrayAdapter<Test> testItems;
 	EditText testNameInput;
 	Button addTestButton;
-	ListView listView;
-	
-	@Override
+	ListView mListView;
+	StableArrayAdapter mAdapter;
+    BackgroundContainer mBackgroundContainer;
+    boolean mSwiping = false;
+    boolean mItemPressed = false;
+    HashMap<Long, Integer> mItemIdTopMap = new HashMap<Long, Integer>();
+
+    private static final int SWIPE_DURATION = 250;
+    private static final int MOVE_DURATION = 150;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		 setContentView(R.layout.activity_view_all_tests);
