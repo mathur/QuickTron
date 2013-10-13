@@ -174,15 +174,16 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             MatOfPoint contour = mDetector.getContour();
             MatOfPoint orientationLine = mDetector.getOrientationLine();
+            List<MatOfPoint> answerGrid = mDetector.getAnswerGrid(); 
 //            List<MatOfPoint> green = mDetector.getGreenishThings();
             if(contour != null) {
             	contours.add(contour);
             	if(orientationLine != null) {
             		contours.add(orientationLine);
             	}
-//            	if(green != null) {
-//            		Imgproc.drawContours(mRgba, green, -1, new Scalar(255,255,0,255), 2);
-//            	}
+            	if(answerGrid != null) {
+            		Imgproc.drawContours(mRgba, answerGrid, -1, new Scalar(255,255,0,255), 2);
+            	}
             }
 //            Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR,2);
@@ -190,18 +191,6 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
-
-            Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-            mSpectrum.copyTo(spectrumLabel);
-
-            Point[] reference = new Point[4];
-            
-            reference[0] = new Point(50,0);
-            reference[1] = new Point(1920,0);
-            reference[2] = new Point(1920,746);
-            reference[3] = new Point(50,746);
-
-            mDetector.processRect(mRgba, reference);
         }
         return mRgba;
     }
