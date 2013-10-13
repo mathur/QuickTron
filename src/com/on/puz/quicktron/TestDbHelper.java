@@ -165,7 +165,6 @@ public class TestDbHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-
         // return the now filled test list
         return testList;
     }

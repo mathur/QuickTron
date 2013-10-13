@@ -79,6 +79,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.color_blob_detection_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
+        mIsColorSelected = false;
     }
 
     @Override
