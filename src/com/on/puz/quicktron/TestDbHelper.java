@@ -194,6 +194,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
         }
         return testList;
     }
+
     /*
      * Method that gets all test names
      *
@@ -201,11 +202,11 @@ public class TestDbHelper extends SQLiteOpenHelper {
      */
     public ArrayList<String> getTestNames() {
 
-        String sql = "SELECT "+KEY_TESTNAME+" FROM " + TABLE_ITEMS;
+        String sql = "SELECT " + KEY_TESTNAME + " FROM " + TABLE_ITEMS;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
-x
+
         ArrayList<String> nameList = new ArrayList<String>();
 
         if (cursor.moveToFirst()) {
@@ -222,5 +223,30 @@ x
         cleanedNames.addAll(hs);
 
         return cleanedNames;
+    }
+
+    /*
+     * Method that gets all test names
+     *
+     * @return an ArrayList of strings which are the names of all the tests
+     */
+    public ArrayList<String> getEmails() {
+
+        ArrayList<String> emailList = new ArrayList<String>();
+        String sql = "SELECT " + KEY_EMAIL + " FROM " + TABLE_ITEMS + " ORDER BY " + KEY_ID + " ASC";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String email = cursor.getString(4);
+                emailList.add(email);
+            } while (cursor.moveToNext());
+        }
+
+        // return the now filled item list
+        return emailList;
     }
 }
