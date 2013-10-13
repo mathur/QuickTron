@@ -150,8 +150,8 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
 
-        Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
-                ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
+        Log.i(TAG, "Touched hsv color: (" + mBlobColorHsv.val[0] + ", " + mBlobColorHsv.val[1] +
+                ", " + mBlobColorHsv.val[2]+ ")");
 
         mDetector.setHsvColor(mBlobColorHsv);
 
@@ -173,14 +173,19 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             MatOfPoint contour = mDetector.getContour();
             MatOfPoint orientationLine = mDetector.getOrientationLine();
+//            List<MatOfPoint> green = mDetector.getGreenishThings();
             if(contour != null) {
             	contours.add(contour);
             	if(orientationLine != null) {
             		contours.add(orientationLine);
             	}
+//            	if(green != null) {
+//            		Imgproc.drawContours(mRgba, green, -1, new Scalar(255,255,0,255), 2);
+//            	}
             }
-            Log.e(TAG, "Contours count: " + contours.size());
+//            Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR,2);
+            
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);

@@ -30,6 +30,7 @@ public class ScantronDetector {
     private Mat mSpectrum = new Mat();
     private Point[] mContour = null;
     private Point[] mOrientationLine = null;
+    private List<MatOfPoint> mGreens = new ArrayList<MatOfPoint>();
 //    private static final int MIN_NULL_COUNT = 4;
 //    private int nullCount = 0;
 
@@ -127,15 +128,8 @@ public class ScantronDetector {
                 maxContour = contour;
             }
         }
-//        if(maxContour != null) {
-    	mContour = maxContour.toArray();
-//        	nullCount = 0;
-//        } else {
-//    		nullCount++;
-//        	if(nullCount > MIN_NULL_COUNT) {
-//        		mContour = null;
-//        	}
-//        }
+        mContour = (maxContour != null) ? maxContour.toArray() :
+        								  null;
         if(mContour != null) {
         	List<Integer> nearlyHoriz = new ArrayList<Integer>(),
         				  nearlyVert  = new ArrayList<Integer>();
@@ -153,6 +147,7 @@ public class ScantronDetector {
         	}
         	if(nearlyHoriz.size() < 2 || nearlyVert.size() < 2) {
         		mOrientationLine = null;
+    	        mGreens.clear();
         		return;
         	}
         	Comparator<Integer> compare = new Comparator<Integer>() {
@@ -196,13 +191,133 @@ public class ScantronDetector {
 	   			orientationLine[1] = new Point((c.x+d.x)/2, (c.y+d.y)/2);
 	   		}
 	   		mOrientationLine = orientationLine;
+	   		Scalar maxGreen = new Scalar(160,160,200,255),
+	   			   minGreen = new Scalar(100, 60, 20,  0);
+
+	        Core.inRange(mHsvMat, minGreen, maxGreen, mMask);
+	        mGreens.clear();
+	        Imgproc.findContours(mMask, mGreens, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+	        List<Point[]> greens = new ArrayList<Point[]>();
+	        double aboveLineArea = 0;
+        	MatOfPoint2f mainContour = new MatOfPoint2f(mContour);
+        	Point p1,p2;
+        	if((isLandscape && orientationLine[0].x < orientationLine[1].x) ||
+        	   orientationLine[0].y < orientationLine[0].y){
+        		p1 = orientationLine[0];
+        		p2 = orientationLine[1];
+        	} else {
+        		p1 = orientationLine[1];
+        		p2 = orientationLine[0];
+        	}
+	        for(MatOfPoint green:mGreens) {
+	        	MatOfInt hullInd = new MatOfInt();
+	        	Imgproc.convexHull(green, hullInd);
+	        	Point[] hull = new Point[hullInd.rows()];
+	        	for(int i=0;i<hull.length;++i) {
+	        		double[] pt = green.get((int)hullInd.get(i,0)[0], 0);
+	        		hull[i] = new Point(pt[0],pt[1]);
+	        	}
+	        	boolean onScantron = true;
+	        	int lineRelation = 0;
+	        	for(Point p:hull) {
+	        		if(Imgproc.pointPolygonTest(mainContour, p, false) < 0) {
+	        			onScantron = false;
+	        			break;
+	        		}
+	        		if((p2.x-p1.x)*(p.x-p1.x)-(p2.y-p1.y)*(p.x-p1.x) > 0) {
+	        			lineRelation++;
+	        		} else {
+	        			lineRelation--;
+	        		}
+	        	}
+	        	if(onScantron) {
+	        		greens.add(green.toArray());
+	        		aboveLineArea += Math.abs(Imgproc.contourArea(new MatOfPoint(hull)))*Math.signum(lineRelation);
+	        	}
+	        }
+	        mGreens.clear();
+	        for(Point[] contour:greens) {
+	        	mGreens.add(new MatOfPoint(contour));
+	        }
+	        if(aboveLineArea >= 0) {
+	        	orientationLine[0] = p2;
+	        	orientationLine[1] = p1;
+	        } else {
+	        	orientationLine[0] = p2;
+	        	orientationLine[1] = p1;
+	        }
+	        int[] edges = new int[4];
+	        if(isLandscape) {
+	        	if(Math.signum(orientationLine[1].x-orientationLine[0].x) == Math.signum(mContour[vert[0]].x - mContour[vert[1]].x)) {
+	        		edges[0] = vert[0];
+	        		edges[2] = vert[1];
+	        	} else {
+	        		edges[0] = vert[1];
+	        		edges[2] = vert[0];
+	        	}
+	        	if(Math.signum(mContour[(edges[0]+1)%mContour.length].y-mContour[edges[0]].y) == Math.signum(mContour[horiz[0]].y-mContour[horiz[1]].y)) {
+	        		edges[1] = horiz[0];
+	        		edges[3] = horiz[1];
+	        	} else {
+	        		edges[1] = horiz[1];
+	        		edges[3] = horiz[0];
+	        	}
+	        } else {
+	        	if(Math.signum(orientationLine[1].y-orientationLine[0].y) == Math.signum(mContour[horiz[0]].y - mContour[horiz[1]].y)) {
+	        		edges[0] = horiz[0];
+	        		edges[2] = horiz[1];
+	        	} else {
+	        		edges[0] = horiz[1];
+	        		edges[2] = horiz[0];
+	        	}
+	        	if(Math.signum(mContour[(edges[0]+1)%mContour.length].x-mContour[edges[0]].x) == Math.signum(mContour[vert[0]].x-mContour[vert[1]].x)) {
+	        		edges[1] = vert[0];
+	        		edges[3] = vert[1];
+	        	} else {
+	        		edges[1] = vert[1];
+	        		edges[3] = vert[0];
+	        	}
+	        }
+	        Point[] contour = new Point[4];
+	        for(int i=0;i<edges.length;++i) {
+	        	int prevI = i == 0 ? edges.length-1 :
+	        						 i-1;
+	        	contour[i] = _intersect(mContour[edges[prevI]],mContour[(edges[prevI]+1)%mContour.length],
+	        							 mContour[edges[i]],mContour[(edges[i]+1)%mContour.length]);
+	        }
+	        mContour = contour;
         }
+    }
+    
+    private double _cross(Point a,Point b) {
+    	return (a.x*b.y-a.y*b.x);
+    }
+    private Point _intersect(Point a1,Point b1,Point a2,Point b2) {
+    	Point r = new Point(b1.x-a1.x,b1.y-a1.y),
+    		  s = new Point(b2.x-a2.x,b2.y-a2.y);
+    	double t = _cross(new Point(a2.x-a1.x,a2.y-a1.y),s)/_cross(r,s);
+    	return new Point(a1.x+t*r.x,a1.y+t*r.y);
     }
 
     public MatOfPoint getContour() {
         return new MatOfPoint(mContour);
     }
     public MatOfPoint getOrientationLine() {
-    	return new MatOfPoint(mOrientationLine);
+    	if(mOrientationLine == null) {
+    		return null;
+    	}
+    	Point[] line = new Point[6];
+    	line[0] = mOrientationLine[0];
+    	line[1] = mOrientationLine[1];
+    	line[2] = new Point(line[0].x*0.25+line[1].x*0.75,line[0].y*0.25+line[1].y*0.75);
+    	double dx = line[2].x-line[1].x,
+    		   dy = line[2].y-line[1].y;
+    	line[3] = new Point(line[2].x+dy,line[2].y-dx);
+    	line[4] = new Point(line[2].x-dy,line[2].y+dx);
+    	line[5] = line[2];
+    	return new MatOfPoint(line);
+    }
+    public List<MatOfPoint> getGreenishThings() {
+    	return mGreens;
     }
 }
