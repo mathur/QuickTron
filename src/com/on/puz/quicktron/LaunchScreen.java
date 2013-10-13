@@ -45,15 +45,25 @@ public class LaunchScreen extends Activity {
 	 */
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 
+	private static final String TEST_NEW = "com.on.puz.quicktron.TEST_NEW";
+
 	/**
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
 
-	public void startScanning(View view)
+	public void scanNewTest(View view)
 	{
 		Intent intent = new Intent(this, MainActivity.class);
+		intent.putExtra(TEST_NEW, true);
         startActivity(intent);
+        
+	}
+	public void viewTestsList(View view)
+	{
+		Intent intent = new Intent(this, ViewAllTests.class);
+        startActivity(intent);
+        
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
