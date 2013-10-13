@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LaunchScreen extends Activity {
 
@@ -21,10 +22,14 @@ public class LaunchScreen extends Activity {
 		alert.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
 	        public void onClick(final DialogInterface dialog, final int whichButton) {
 	            final String value = input.getText().toString().trim();
-	            if (value.length()<=0)
+	            if (value.length()<=0){
+	            	Toast.makeText(getApplicationContext(), R.string.no_new_test_name, Toast.LENGTH_SHORT).show();
 	            	dialog.cancel();
-	    		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-	    		startActivity(intent);
+	            }
+	            else{
+		    		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+		    		startActivity(intent);
+	            }
 	        }
 	    });
 
