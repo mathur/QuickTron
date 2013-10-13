@@ -148,6 +148,7 @@ public class ScantronDetector {
         		}
         	}
         	if(nearlyHoriz.size() < 2 || nearlyVert.size() < 2) {
+        		mContour = null;
         		mOrientationLine = null;
     	        mGreens.clear();
         		return;
@@ -302,6 +303,9 @@ public class ScantronDetector {
     }
 
     public MatOfPoint getContour() {
+    	if(mContour == null) {
+    		return null;
+    	}
         return new MatOfPoint(mContour);
     }
     public MatOfPoint getOrientationLine() {
