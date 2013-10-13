@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:keepScreenOn="true"
         android:text="@string/dummy_content"
         android:textColor="#33b5e5"
         android:textSize="50sp"
@@ -61,6 +60,15 @@
                 android:onClick="scanNewTest" />
             
         </LinearLayout>
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Directions"
+                android:id="@+id/btnDirections"
+                android:layout_gravity="left|top"
+                android:onClick="showDirections"
+                android:singleLine="false"/>
 
         <!-- <Button
                 android:layout_width="fill_parent"

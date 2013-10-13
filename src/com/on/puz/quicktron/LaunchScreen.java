@@ -47,24 +47,20 @@ public class LaunchScreen extends Activity {
 	{
 		Intent intent = new Intent(this, ViewAllTests.class);
         startActivity(intent);
-
 	}
 
     public void sendSendGrid(View view)
     {
-        SendGrid sendgrid = new SendGrid("rohan32", "hackru");
-        sendgrid.addTo("rohanmathur34@gmail.com");
-        sendgrid.setFrom("rohan@rmathur.com");
-        sendgrid.setSubject("Subj");
-        sendgrid.setText("Hi");
-
-        final SendGrid sendgriddone = sendgrid;
-
         Thread thread = new Thread(new Runnable(){
             @Override
             public void run() {
                 try {
-                    sendgriddone.send();
+                    SendGrid sendgrid = new SendGrid("rohan32", "hackru");
+                    sendgrid.addTo("rohanmathur34@gmail.com");
+                    sendgrid.setFrom("rohan@rmathur.com");
+                    sendgrid.setSubject("Subj");
+                    sendgrid.setText("Hi");
+                    sendgrid.send();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -72,6 +68,20 @@ public class LaunchScreen extends Activity {
         });
 
         thread.start();
+    }
+
+    public void showDirections(View view)
+    {
+        final AlertDialog.Builder newName = new AlertDialog.Builder(this);
+        newName.setTitle("Directions");
+        newName.setMessage("Hello");
+        AlertDialog alert = newName.create();
+        alert.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, final int whichButton) {
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 
 	@Override
