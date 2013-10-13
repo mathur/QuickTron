@@ -199,23 +199,30 @@ public class ScantronDetector {
 	   		mOrientationLine = new MatOfPoint(orientationLine);
         }
     }
-    public void processRect(Mat rgbaImage) {
-    	List<Rect> rects = new ArrayList<Rect>();
-    	int numRows = 50;//should be 50
-    	double xoffset = 580.0;
-    	double yoffset = 30.0;
+    public double distance(Point p1, Point p2) { //guys, i'm clearly good at this shit #burnout
+    	return Math.sqrt(Math.pow((p1.x-p2.x),2) + Math.pow((p1.y-p2.y),2));
+    }
+    public void processRect(Mat rgbaImage, Point[] reference) {
+    	double longside = distance(reference[0],reference[1]);
+    	double shortside = distance(reference[1],reference[2]);
     	
-    	double ydistance = 350.0;
-    	double width = 15.0;
-    	double length = 300.0;
+      	int numRows = 50;//should be 50 questions //HOLYSHIT I HAVE NO IDEA WTF IM ACTUALLY FKING DOING
+    	double ydistance = reference[0].y+0.36842105263*shortside; //distance from the left side (remember the fucking phone is landfuckinscape [WHAT THE FLYINF FUCK])
+    	double xdistance = reference[3].x+0.01714285714*longside; //distance from the top...#WTFISTHISSHIT HAHAHAHAH ...wtfactually
+
+    	double width = 0.01514285714*longside; //width of each row
+    	double length = 0.36842105263*shortside; //length of each row
+    	
+    	double xoffset = 0.01714285714*longside; //multiplier to get each row's x-coordinate
+
     	List<MatOfPoint> rectPoints = new ArrayList<MatOfPoint>(50);
     	
     	for(int i = 0; i < numRows;i++) {
         	Point[] points = new Point[4];
-    		points[0] = new Point(yoffset*i+ydistance, xoffset);
-    		points[1] = new Point(yoffset*i+width+ydistance, xoffset);
-    		points[2] = new Point(yoffset*i+width+ydistance, xoffset+length);
-    		points[3] = new Point(yoffset*i+ydistance, xoffset+length);
+    		points[0] = new Point(xoffset*i+xdistance, ydistance);
+    		points[1] = new Point(xoffset*i+width+xdistance, ydistance);
+    		points[2] = new Point(xoffset*i+width+xdistance, ydistance+length);
+    		points[3] = new Point(xoffset*i+xdistance, ydistance+length);
 
     		rectPoints.add(i, new MatOfPoint(points));
     	}

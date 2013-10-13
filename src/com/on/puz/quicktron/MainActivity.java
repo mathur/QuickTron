@@ -11,6 +11,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -36,11 +37,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     private Mat                  mRgba;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
-<<<<<<< HEAD
-    private ScantronDetector    mDetector;
-=======
-    private ScantronDetector     mDetector;
->>>>>>> origin/master
+    private ScantronDetector 	 mDetector;
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
@@ -173,7 +170,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         mRgba = inputFrame.rgba();
 
         if (mIsColorSelected) {
-            mDetector.process(mRgba);
+            //mDetector.process(mRgba);
             List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             MatOfPoint contour = mDetector.getContour();
             MatOfPoint orientationLine = mDetector.getOrientationLine();
@@ -191,7 +188,15 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
             Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
             mSpectrum.copyTo(spectrumLabel);
-            mDetector.processRect(mRgba);
+            //test code for JOE HOLYSHIT
+            Point[] reference = new Point[4];
+            
+            reference[0] = new Point(50,0);
+            reference[1] = new Point(1920,0);
+            reference[2] = new Point(1920,746);
+            reference[3] = new Point(50,746);
+
+            mDetector.processRect(mRgba, reference);
         }
         return mRgba;
     }
