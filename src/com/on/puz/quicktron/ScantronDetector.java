@@ -97,6 +97,8 @@ public class ScantronDetector {
         // Filter contours by area and resize to fit the original image size
         List<MatOfPoint> goodContours = new ArrayList<MatOfPoint>();
         Iterator<MatOfPoint> each = contours.iterator();
+        MatOfPoint hull = new MatOfPoint();
+        MatOfPoint2f hull2f = new MatOfPoint2f();
         while (each.hasNext()) {
             MatOfPoint contour = each.next();
 //            Core.multiply(contour, new Scalar(4,4), contour);
@@ -106,15 +108,15 @@ public class ScantronDetector {
             for(int i=0;i<pts.length;++i) {
             	pts[i] = new Point();
             }
-            MatOfPoint hull = new MatOfPoint(pts);
+            hull.fromArray(pts);
             for(int j = 0; j < indices.size().height; j++){
                 int index = (int) indices.get(j, 0)[0];
                 hull.put(j, 0, contour.get(index, 0));
             }
-            MatOfPoint2f hull2f = new MatOfPoint2f(hull.toArray());
+            hull2f.fromArray(hull.toArray());
 
             Imgproc.approxPolyDP(hull2f, hull2f, 15.0, true);
-            hull = new MatOfPoint(hull2f.toArray());
+            hull.fromArray(hull2f.toArray());
             Log.d("Num verts",""+hull.size().height + " from " + indices.size().height);
         	goodContours.add(hull);
         }
@@ -198,7 +200,7 @@ public class ScantronDetector {
 	        mGreens.clear();
 	        Imgproc.findContours(mMask, mGreens, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 	        List<Point[]> greens = new ArrayList<Point[]>();
-	        double aboveLineArea = 0;
+	        int aboveLineCount = 0;
         	MatOfPoint2f mainContour = new MatOfPoint2f(mContour);
         	Point p1,p2;
         	if((isLandscape && orientationLine[0].x < orientationLine[1].x) ||
@@ -209,17 +211,17 @@ public class ScantronDetector {
         		p1 = orientationLine[1];
         		p2 = orientationLine[0];
         	}
+        	MatOfInt hullInd = new MatOfInt();
 	        for(MatOfPoint green:mGreens) {
-	        	MatOfInt hullInd = new MatOfInt();
 	        	Imgproc.convexHull(green, hullInd);
-	        	Point[] hull = new Point[hullInd.rows()];
-	        	for(int i=0;i<hull.length;++i) {
+	        	Point[] hullPts = new Point[hullInd.rows()];
+	        	for(int i=0;i<hullPts.length;++i) {
 	        		double[] pt = green.get((int)hullInd.get(i,0)[0], 0);
-	        		hull[i] = new Point(pt[0],pt[1]);
+	        		hullPts[i] = new Point(pt[0],pt[1]);
 	        	}
 	        	boolean onScantron = true;
 	        	int lineRelation = 0;
-	        	for(Point p:hull) {
+	        	for(Point p:hullPts) {
 	        		if(Imgproc.pointPolygonTest(mainContour, p, false) < 0) {
 	        			onScantron = false;
 	        			break;
@@ -232,14 +234,14 @@ public class ScantronDetector {
 	        	}
 	        	if(onScantron) {
 	        		greens.add(green.toArray());
-	        		aboveLineArea += Math.abs(Imgproc.contourArea(new MatOfPoint(hull)))*Math.signum(lineRelation);
+	        		aboveLineCount += lineRelation;
 	        	}
 	        }
 	        mGreens.clear();
 	        for(Point[] contour:greens) {
 	        	mGreens.add(new MatOfPoint(contour));
 	        }
-	        if(aboveLineArea >= 0) {
+	        if(aboveLineCount >= 0) {
 	        	orientationLine[0] = p2;
 	        	orientationLine[1] = p1;
 	        } else {
