@@ -49,7 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/view_tests_label" 
-                android:onClick="viewTestsList"/>
+                android:onClick="viewTestsList"
+                    />
             <Button
                 android:id="@+id/new_test_button"
                 style="?buttonBarButtonStyle"
@@ -57,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/new_test_label" 
-                android:onClick="scanNewTest"/>
+                android:onClick="scanNewTest"
+                    />
             
         </LinearLayout>
     </FrameLayout>
