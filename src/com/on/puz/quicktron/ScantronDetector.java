@@ -350,7 +350,12 @@ public class ScantronDetector {
                         sendgrid.setText("Hello!\n" +
                                 "On your test, you received a score of " + (actualScore * 100) + "%.\n" +
                                 "Please find a score report located below:\n\n" +
-                                actualStudentTestResult + "\n\nThanks for using QuickTron!");
+                                actualStudentTestResult + "\n\nThe key for using your score report to help you in the future is as follows:\n" +
+                                "C = correct\n" +
+                                "O = blank/omitted\n" +
+                                "M = multiple answers selected\n" +
+                                "W = incorrect\n" +
+                                "Thanks for using QuickTron!");
                         sendgrid.send();
                     } catch (Exception e) {
                         e.printStackTrace();
