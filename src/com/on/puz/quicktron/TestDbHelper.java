@@ -1,6 +1,5 @@
 package com.on.puz.quicktron;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -202,7 +201,6 @@ public class TestDbHelper extends SQLiteOpenHelper {
      */
     public ArrayList<String> getTestNames() {
 
-        SQLiteDatabase db = this.getWritableDatabase();
         String sql = "SELECT * FROM " + TABLE_ITEMS + ")";
 
         SQLiteDatabase db = this.getWritableDatabase();
