@@ -74,7 +74,7 @@ public class LaunchScreen extends Activity {
     {
         final AlertDialog.Builder newName = new AlertDialog.Builder(this);
         newName.setTitle("Directions");
-        newName.setMessage("For best results, place scantron on a table and hold phone a foot above it, parallel to table.\nGrading should not take more than a few seconds.\nConfirm grading to email results to student.");
+        newName.setMessage("For best results, place scantron on a table and hold phone a foot above it, parallel to table.\n\nGrading should not take more than a few seconds.\n\nConfirm grading to email results to student.");
         AlertDialog alert = newName.create();
         alert.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, final int whichButton) {
