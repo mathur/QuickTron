@@ -26,11 +26,14 @@
             </intent-filter>
         </activity>
         <activity
-
             android:name="com.on.puz.quicktron.ViewAllTests"
-
             android:label="@string/title_activity_view_all_tests" >
-
+        </activity>
+        <activity
+                android:name="com.on.puz.quicktron.About"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                android:label="@string/title_activity_about"
+                android:theme="@style/FullscreenTheme" >
         </activity>
 
     </application>
@@ -43,7 +46,7 @@
         android:smallScreens="true" />
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="12"
         android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.CAMERA" />

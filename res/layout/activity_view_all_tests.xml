@@ -14,7 +14,10 @@
 	    android:id="@+id/add_test_button"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:onClick="addNewTest"/>
+	    android:onClick="addNewTest"
+            android:layout_gravity="top"
+            />
+
     <ListView
         android:id="@+id/all_tests"
         android:layout_width="fill_parent"

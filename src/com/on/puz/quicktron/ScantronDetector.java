@@ -528,8 +528,48 @@ public class ScantronDetector {
 
 		//Imgproc.boundingRect(points);
     }
-    
-    private double _cross(Point a,Point b) {
+    private boolean[][] getFillIn(Point[][] answers, Mat hsv) {
+		boolean[][] answerFill = new boolean[50][5];
+		
+		for(int i = 0; i < answers.length; i++) {
+			double length = Math.abs(answers[i][0].x - answers[i][1].x);//might not be used???wtflol
+			double width = Math.abs(answers[i][0].y - answers[i][3].y);
+			double xoffset = (answers[i][1].x - answers[i][0].x)/5;
+			double yoffset = (answers[i][1].y) - answers[i][0].y/5;
+			for(int j = 0; j < 5; j++) { 
+				List<Point> r = new ArrayList<Point>();
+				r.add(new Point(answers[i][0].x + xoffset*j, answers[i][0].y + yoffset*j));
+				r.add(new Point(answers[i][0].x + xoffset*(j+1), answers[i][0].y + yoffset*(j+1)));
+				r.add(new Point(answers[i][0].x + xoffset*(j+1), answers[i][0].y + yoffset*(j+1)-width));
+				r.add(new Point(answers[i][0].x + xoffset*j, answers[i][0].y + xoffset*j-width));
+				answerFill[i][j] = checkFill(r, hsv);
+			}
+		}
+		
+    	return answerFill;
+    	
+    }
+    private boolean checkFill(List<Point> r, Mat hsv) {
+    	Point[] p = (Point[]) r.toArray();
+    	MatOfPoint m = new MatOfPoint(p);
+        Rect rect = Imgproc.boundingRect(m);
+        Mat touchedRegionHsv = hsv.submat(rect);
+        Scalar mBlobColorHsv = Core.sumElems(touchedRegionHsv);
+        int pointCount = m.width()*m.height();
+        for (int i = 0; i < mBlobColorHsv.val.length; i++) {
+            mBlobColorHsv.val[i] /= pointCount;
+        }
+        if( mBlobColorHsv.val[1] > mLowerBound.val[1] && mBlobColorHsv.val[1] < mUpperBound.val[1] &&
+        	mBlobColorHsv.val[2] > mLowerBound.val[2] && mBlobColorHsv.val[2] < mUpperBound.val[2]) {
+        	return false;
+        } else {
+        	return true;
+        }
+	}
+	public static void markStudentTest(Mat mRgba, List<Point> points, String studentTestResult) {
+		
+	}
+	private double _cross(Point a,Point b) {
     	return (a.x*b.y-a.y*b.x);
     }
     private Point _intersect(Point a1,Point b1,Point a2,Point b2) {
