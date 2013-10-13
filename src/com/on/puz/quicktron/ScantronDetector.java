@@ -32,6 +32,7 @@ public class ScantronDetector {
     private Point[] mContour = null;
     private Point[] mOrientationLine = null;
     private List<MatOfPoint> mGreens = new ArrayList<MatOfPoint>();
+    private List<Point[]> mRows = null;
 //    private static final int MIN_NULL_COUNT = 4;
 //    private int nullCount = 0;
 
@@ -151,6 +152,7 @@ public class ScantronDetector {
         	if(nearlyHoriz.size() < 2 || nearlyVert.size() < 2) {
         		mContour = null;
         		mOrientationLine = null;
+        		mRows = null;
     	        mGreens.clear();
         		return;
         	}
@@ -254,32 +256,32 @@ public class ScantronDetector {
 	        if(isLandscape) {
 	        	if(Math.signum(orientationLine[1].x-orientationLine[0].x) == Math.signum(mContour[vert[0]].x - mContour[vert[1]].x)) {
 	        		edges[0] = vert[0];
-	        		edges[3] = vert[1];
+	        		edges[2] = vert[1];
 	        	} else {
 	        		edges[0] = vert[1];
-	        		edges[3] = vert[0];
+	        		edges[2] = vert[0];
 	        	}
 	        	if(Math.signum(mContour[(edges[0]+1)%mContour.length].y-mContour[edges[0]].y) == Math.signum(mContour[horiz[0]].y-mContour[horiz[1]].y)) {
 	        		edges[1] = horiz[0];
-	        		edges[2] = horiz[1];
+	        		edges[3] = horiz[1];
 	        	} else {
 	        		edges[1] = horiz[1];
-	        		edges[2] = horiz[0];
+	        		edges[3] = horiz[0];
 	        	}
 	        } else {
 	        	if(Math.signum(orientationLine[1].y-orientationLine[0].y) == Math.signum(mContour[horiz[0]].y - mContour[horiz[1]].y)) {
 	        		edges[0] = horiz[0];
-	        		edges[3] = horiz[1];
+	        		edges[2] = horiz[1];
 	        	} else {
 	        		edges[0] = horiz[1];
-	        		edges[3] = horiz[0];
+	        		edges[2] = horiz[0];
 	        	}
 	        	if(Math.signum(mContour[(edges[0]+1)%mContour.length].x-mContour[edges[0]].x) == Math.signum(mContour[vert[0]].x-mContour[vert[1]].x)) {
 	        		edges[1] = vert[0];
-	        		edges[2] = vert[1];
+	        		edges[3] = vert[1];
 	        	} else {
 	        		edges[1] = vert[1];
-	        		edges[2] = vert[0];
+	        		edges[3] = vert[0];
 	        	}
 	        }
 	        Point[] contour = new Point[4];
@@ -290,38 +292,51 @@ public class ScantronDetector {
 	        							 mContour[edges[i]],mContour[(edges[i]+1)%mContour.length]);
 	        }
 	        mContour = contour;
+            mRows = processRect(contour);
         }
     }
     public double distance(Point p1, Point p2) { //guys, i'm clearly good at this shit #burnout
     	return Math.sqrt(Math.pow((p1.x-p2.x),2) + Math.pow((p1.y-p2.y),2));
     }
-    public void processRect(Mat rgbaImage, Point[] reference) {
-    	double longside = distance(reference[0],reference[1]);
-    	double shortside = distance(reference[1],reference[2]);
+    public List<Point[]> processRect(Point[] reference) {
+    	Point r = new Point(reference[1].x-reference[0].x,reference[1].y-reference[0].y),
+    		  s = new Point(reference[3].x-reference[0].x,reference[3].y-reference[0].y);
+    	for(int i=0;i<reference.length;++i) {
+    		Log.d("Pt " + (i+1), "("+reference[i].x+","+reference[i].y+")");
+    	}
+    	Log.d("axes","<"+r.x+","+r.y+">;<"+s.x+","+s.y+">");
     	
-      	int numRows = 50;//should be 50 questions //HOLYSHIT I HAVE NO IDEA WTF IM ACTUALLY FKING DOING
-    	double ydistance = reference[0].y+0.36842105263*shortside; //distance from the left side (remember the fucking phone is landfuckinscape [WHAT THE FLYINF FUCK])
-    	double xdistance = reference[3].x+0.01714285714*longside; //distance from the top...#WTFISTHISSHIT HAHAHAHAH ...wtfactually
+    	Point origin = reference[0];
+      	int numRows = 50;
+    	double rdistance = 0.36842105263; 
+    	double sdistance = 0.01714285714; 
 
-    	double width = 0.01514285714*longside; //width of each row
-    	double length = 0.36842105263*shortside; //length of each row
+    	double sheight = 0.01514285714; 
+    	double rwidth  = 0.36842105263;
     	
-    	double xoffset = 0.01714285714*longside; //multiplier to get each row's x-coordinate
+    	double sstep = 0.01714285714;
 
-    	List<MatOfPoint> rectPoints = new ArrayList<MatOfPoint>(50);
+    	List<Point[]> rectPoints = new ArrayList<Point[]>();
     	
     	for(int i = 0; i < numRows;i++) {
         	Point[] points = new Point[4];
-    		points[0] = new Point(xoffset*i+xdistance, ydistance);
-    		points[1] = new Point(xoffset*i+width+xdistance, ydistance);
-    		points[2] = new Point(xoffset*i+width+xdistance, ydistance+length);
-    		points[3] = new Point(xoffset*i+xdistance, ydistance+length);
+        	points[0] = new Point(origin.x+rdistance*r.x+sdistance*s.x+sstep*i*s.x,
+        						  origin.y+rdistance*r.y+sdistance*s.y+sstep*i*s.y);	
+        	points[1] = new Point(points[0].x+sheight*s.x,
+        						  points[0].y+sheight*s.y);
+        	points[2] = new Point(points[0].x+sheight*s.x+rwidth*r.x,
+        						  points[0].y+sheight*s.y+rwidth*r.y);	
+        	points[3] = new Point(points[0].x+rwidth*r.x,
+					  			  points[0].y+rwidth*r.y);
+    		rectPoints.add(points);
 
-    		rectPoints.add(i, new MatOfPoint(points));
+//    		rectPoints.add(i, new MatOfPoint(points));
     	}
+    	
+    	return rectPoints;
 		
 		//rectPoints.fromArray(points);
-        Imgproc.drawContours(rgbaImage, rectPoints, -1, new Scalar(255,0,0,255));
+//        Imgproc.drawContours(rgbaImage, rectPoints, -1, new Scalar(255,0,0,255));
 
 		//Imgproc.boundingRect(points);
     }
@@ -357,7 +372,14 @@ public class ScantronDetector {
     	line[5] = line[2];
     	return new MatOfPoint(line);
     }
-    public List<MatOfPoint> getGreenishThings() {
-    	return mGreens;
+    public List<MatOfPoint> getAnswerGrid() {
+    	if(mRows == null) {
+    		return null;
+    	}
+    	List<MatOfPoint> ret = new ArrayList<MatOfPoint>();
+    	for(Point[] row: mRows) {
+    		ret.add(new MatOfPoint(row));
+    	}
+    	return ret;
     }
 }
