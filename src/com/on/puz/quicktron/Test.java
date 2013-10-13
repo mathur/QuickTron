@@ -1,11 +1,13 @@
 package com.on.puz.quicktron;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Test {
     private int id;
     private String testName;
     private int answerKey;
     private String scores;
-    private String email;
 
     /*
      * Constructor that sets up a test of name null
@@ -19,12 +21,11 @@ public class Test {
     /*
      * Constructor that sets up a test with specified parameters
      */
-    public Test(String newTestName, int isAnswerKey, String answerList, String newEmail) {
+    public Test(String newTestName, int isAnswerKey, String scoreList) {
         super();
         this.testName = newTestName;
         this.answerKey = isAnswerKey;
-        this.scores = answerList;
-        this.email = newEmail;
+        this.scores = scoreList;
     }
 
     /*
@@ -38,8 +39,6 @@ public class Test {
 
     /*
      * Method to set the Id of a specific Test object
-     *
-     * SHOULD NEVER EVER EVER EVER EVER EVER BE USED!!!!!
      *
      * @param id is the desired id for the object currently being processed
      */
@@ -87,7 +86,7 @@ public class Test {
 
 
     /*
-     * Method to return the scores in a string in CSV format
+     * Method to get the name of a specific Test object
      *
      * @return the scores for each question, with each question being part of the string
      */
@@ -96,33 +95,14 @@ public class Test {
     }
 
     /*
-     * Method that sets the scores of a test object, in CSV format
-     *
-     * @param newScores is the new set of scores to add to this item object, as a string
-     */
-    public void setScores(String newScores) {
-        scores = newScores;
-    }
-
-    /*
-     * Method to get the name of a specific Test object
-     *
-     * @return the scores for each question, with each question being part of the string
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /*
      * Method that sets the name of an Test object
      *
      * @param newScores is the new set of scores to add to this item object, as a string
      */
-    public void setEmail(String newEmail) {
-        scores = newEmail;
+    public void setScores(String newScores) {
+        this.scores = newScores;
     }
-
     public String toString(){
-    	return testName;
+        return testName;
     }
 }
