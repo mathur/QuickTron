@@ -17,6 +17,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.utils.Converters;
 
 import android.util.Log;
 
@@ -304,61 +305,223 @@ public class ScantronDetector {
 	        }
 	        contour[contour.length-1] = first;
 	        mContour = contour;
-            mRows = processRect(contour);
+	        mRows = processRect(contour,mHsvMat);
+//	        mRows = new ArrayList<Point[]>();
+//            List<Point[]> blackLines = processRect(contour,mHsvMat);
+	        return;
+            /*if(blackLines != null && blackLines.size() != 0) {
+            	Log.d("black lines","lining!");
+            	final Point r = new Point(mContour[1].x-mContour[0].x,mContour[1].y-mContour[0].y),
+          		            s = new Point(mContour[3].x-mContour[0].x,mContour[3].y-mContour[0].y);
+            	final double rheight = 0.00814285714;
+            	final double swidth  = 0.36842105263;
+            	final double sdistance = 0.0634285714; 
+            	for(Point[] cont:blackLines) {
+            		if(cont.length <= 1) {
+            			continue;
+            		}
+            		Point pa = cont[0];
+            		Point pb = cont[1];
+                	double rProj  = (pa.x*r.x+pa.y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y),
+                 		   sProja = (pa.x*s.x+pa.y*s.y)/Math.sqrt(s.x*s.x+s.y*s.y),
+                 		   sProjb = (pb.x*s.x+pb.y*s.y)/Math.sqrt(s.x*s.x+s.y*s.y);
+                	if(sProjb < sProja) {
+                		pb = pa;
+                	}
+                	Point[] rect = new Point[4];
+                	rect[0] = new Point(pb.x-sdistance*s.x,pb.y-sdistance*s.y);
+                	rect[1] = new Point(rect[0].x-swidth*s.x,rect[0].y-swidth*s.y);
+                	rect[2] = new Point(rect[0].x-swidth*s.x+rheight*r.x,rect[0].y-swidth*s.y+rheight*r.y);
+                	rect[3] = new Point(rect[0].x+rheight*r.x,rect[0].y+rheight*r.y);
+                	mRows.add(rect);
+            	}
+            }*/
         }
     }
     public double distance(Point p1, Point p2) { //guys, i'm clearly good at this shit #burnout
     	return Math.sqrt(Math.pow((p1.x-p2.x),2) + Math.pow((p1.y-p2.y),2));
     }
-    public List<Point[]> processRect(Point[] reference) {
-    	Point r = new Point(reference[1].x-reference[0].x,reference[1].y-reference[0].y),
-    		  s = new Point(reference[3].x-reference[0].x,reference[3].y-reference[0].y);
-    	for(int i=0;i<reference.length;++i) {
-    		Log.d("Pt " + (i+1), "("+reference[i].x+","+reference[i].y+")");
-    	}
-    	Log.d("axes","<"+r.x+","+r.y+">;<"+s.x+","+s.y+">");
-    	
-    	Point origin = reference[0];
-      	int numRows = 50;
-    	double rdistance = 0.43442105263; 
-    	double sdistance = 0.1634285714; 
-
-    	double sheight = 0.01514285714; 
-    	double rwidth  = 0.36842105263;
-    	
-    	double sstep = 0.01504285714;
-
-    	List<Point[]> rectPoints = new ArrayList<Point[]>();
-    	
-    	for(int i = 0; i < numRows;i++) {
-    		double row1Factor = rdistance,
-    			   row2Factor = rdistance+rwidth,
-    			   col1Factor = sdistance+sstep*i,
-    			   col2Factor = sdistance+sstep*i+sheight;
-    		double[][] factors = new double[4][];
-    		Point[] row1 = new Point[]{ new Point((1-row1Factor)*reference[0].x+row1Factor*reference[3].x,
-    									 	      (1-row1Factor)*reference[0].y+row1Factor*reference[3].y),
-								        new Point((1-row1Factor)*reference[1].x+row1Factor*reference[2].x,
-										          (1-row1Factor)*reference[1].y+row1Factor*reference[2].y) };
-    		Point[] row2 = new Point[]{ new Point((1-row2Factor)*reference[0].x+row2Factor*reference[3].x,
-										 	      (1-row2Factor)*reference[0].y+row2Factor*reference[3].y),
-								        new Point((1-row2Factor)*reference[1].x+row2Factor*reference[2].x,
-										          (1-row2Factor)*reference[1].y+row2Factor*reference[2].y) };
-        	Point[] points = new Point[4]; 
-        	points[0] = new Point((1-col1Factor)*row1[0].x+col1Factor*row1[1].x,
-        						  (1-col1Factor)*row1[0].y+col1Factor*row1[1].y);
-        	points[1] = new Point((1-col2Factor)*row1[0].x+col2Factor*row1[1].x,
-					  			  (1-col2Factor)*row1[0].y+col2Factor*row1[1].y);
-        	points[2] = new Point((1-col2Factor)*row2[0].x+col2Factor*row2[1].x,
-					  			  (1-col2Factor)*row2[0].y+col2Factor*row2[1].y);
-        	points[3] = new Point((1-col1Factor)*row2[0].x+col1Factor*row2[1].x,
-					  			  (1-col1Factor)*row2[0].y+col1Factor*row2[1].y);
-    		rectPoints.add(points);
-
-//    		rectPoints.add(i, new MatOfPoint(points));
-    	}
-    	
-    	return rectPoints;
+    public List<Point[]> processRect(Point[] reference,Mat hsv) {
+    	List<Point[]> ret = new ArrayList<Point[]>();
+    	final Point r = new Point(reference[1].x-reference[0].x,reference[1].y-reference[0].y),
+      		        s = new Point(reference[3].x-reference[0].x,reference[3].y-reference[0].y);
+        Core.inRange(hsv, new Scalar(0,0,0,0), new Scalar(255,255,mLowerBound.val[2]-20,255), mMask);
+        Mat kernel = Mat.ones(3, 3, CvType.CV_32F);
+        Imgproc.dilate(mMask, mMask, kernel);
+        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Imgproc.findContours(mMask, contours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        for(MatOfPoint contour:contours) {
+        	Point[] arr = contour.toArray();
+        	boolean inBounds = true;
+        	for(Point p:arr) {
+        		if(Imgproc.pointPolygonTest(new MatOfPoint2f(reference), p, false) < 0) {
+        			inBounds = false;
+        		}
+        	}
+        	if(!inBounds) {
+        		continue;
+        	}
+        	Point p = arr[0];
+        	double sFactor = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
+        	if((p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y) > 0.1 &&
+        	   sFactor > 0.8) {
+        		ret.add(contour.toArray());	
+        	}
+        }
+        Point[] maxContour = null;
+        double maxArea = 0;
+        for(Point[] contour: ret) {
+        	double area = Math.abs(Imgproc.contourArea(new MatOfPoint(contour)));
+        	Point p = contour[0];
+        	double rProj = (p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y),
+         		   sProj = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
+        	Log.d("sProj",""+sProj);
+        	if(/*sProj > 0.5 && Imgproc.isContourConvex(new MatOfPoint(contour)) &&*/ (maxContour == null || area > maxArea)) {
+        		maxContour = contour;
+        		maxArea = area;
+        	}
+        }
+        if(maxContour == null) {
+        	return null;
+        }
+        double minS = 0,maxS = 0;
+        double minR = 0;
+        for(int i=0;i<maxContour.length;++i) {
+        	Point p = maxContour[i];
+        	double rProj = (p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y),
+        		   sProj = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
+        	if(i == 0 || sProj < minS) {
+        		minS = sProj;
+        	}
+        	if(i == 0 || sProj > maxS) {
+        		maxS = sProj;
+        	}
+        	if(i == 0 || rProj > minR) {
+        		minR = rProj;
+        	}
+        }
+        Collections.sort(ret,new Comparator<Point[]>() {
+			@Override
+			public int compare(Point[] lhs, Point[] rhs) {
+				double rProj1 = (lhs[0].x*r.x+lhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y),
+					   rProj2 = (rhs[0].x*r.x+rhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y);
+				return Double.compare(rProj1, rProj2);
+			}
+		});
+        Log.d("black line bounds","S:["+minS+","+maxS+"],R:["+minR+",inf)");
+        List<Point[]> blackLines = new ArrayList<Point[]>();
+    	MatOfPoint2f maxCont = new MatOfPoint2f(maxContour);
+    	Imgproc.approxPolyDP(maxCont,maxCont,20,true);
+    	maxContour = maxCont.toArray();
+//        blackLines.add(maxContour);
+        for(Point[] contour: ret) {
+        	MatOfPoint2f cont = new MatOfPoint2f(contour);
+        	Imgproc.approxPolyDP(cont,cont,20,true);
+        	contour = cont.toArray();
+        	if(contour.length < 2) {
+        		continue;
+        	}
+        	boolean add = false;
+        	double sMin = 0,sMax = 0;
+        	double rMin = 0;
+            for(int i=0;i<contour.length;++i) {
+            	Point p = contour[i];
+            	double rProj = (p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y),
+            		   sProj = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
+            	if(i == 0 || sProj < sMin) {
+            		sMin = sProj;
+            	}
+            	if(i == 0 || sProj > sMax) {
+            		sMax = sProj;
+            	}
+            	if(i == 0 || rProj < rMin) {
+            		rMin = rProj;
+            	}
+            }
+            double sMid = (sMin+sMax)/2.0;
+            Log.d("black line test","S:"+sMid+"R:"+minR+"");
+            if(blackLines.size() < 3) {
+            	add = (rMin > minR && sMid > minS-0.01 && sMid < maxS+0.01);
+            } else {
+        		Point[] last = blackLines.get(blackLines.size()-1),
+        				nextToLast = blackLines.get(0);
+        		Point lines = new Point((last[1].x+last[0].x)/2.0-(nextToLast[1].x+nextToLast[0].x)/2.0,
+        							    (last[1].y+last[0].y)/2.0-(nextToLast[1].y+nextToLast[0].y)/2.0);
+        		Point mid = new Point((contour[0].x+contour[1].x)/2.0,(contour[0].y+contour[1].y)/2.0);
+        		Point lineToCurr = new Point(mid.x-(last[1].x+last[0].x)/2.0,
+        									 mid.y-(last[1].y+last[0].y)/2.0);
+        		if(lineToCurr.y > 0 && Math.abs(lines.x*lineToCurr.x+lines.y*lineToCurr.y) >= 0.8*Math.sqrt(lines.x*lines.x+lines.y*lines.y)*Math.sqrt(lineToCurr.x*lineToCurr.x+lineToCurr.y*lineToCurr.y)) {
+            		add = (Math.signum(_cross(lineToCurr,new Point(contour[0].x-mid.x,contour[0].y-mid.y))) !=
+             			   Math.signum(_cross(lineToCurr,new Point(contour[1].x-mid.x,contour[1].y-mid.y))));
+        		}
+            }
+        	if(add) {
+            	Point[] pts = cont.toArray();
+        		if((pts.length == 2 || pts.length == 4) &&
+        		   (Math.abs(pts[0].x-pts[1].x) > Math.abs(pts[0].y-pts[1].y)) /*&& 
+        		   Math.abs((pts[1].x-pts[0].x)*r.x+(pts[1].y-pts[0].y)*r.y)/(r.x*r.x+r.y*r.y) < 0.2*/) {
+        			blackLines.add(pts);
+        		}
+            }
+        }
+        Collections.sort(blackLines,new Comparator<Point[]>() {
+			@Override
+			public int compare(Point[] lhs, Point[] rhs) {
+				double rProj1 = (lhs[0].x*r.x+lhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y),
+					   rProj2 = (rhs[0].x*r.x+rhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y);
+				return Double.compare(rProj1, rProj2);
+			}
+		});
+        
+//        return ret;
+        return blackLines;
+//        
+//    	for(int i=0;i<reference.length;++i) {
+//    		Log.d("Pt " + (i+1), "("+reference[i].x+","+reference[i].y+")");
+//    	}
+//    	Log.d("axes","<"+r.x+","+r.y+">;<"+s.x+","+s.y+">");
+//    	
+//    	Point origin = reference[0];
+//      	int numRows = 50;
+//    	double rdistance = 0.43442105263; 
+//    	double sdistance = 0.1634285714; 
+//
+//    	double sheight = 0.01514285714; 
+//    	double rwidth  = 0.36842105263;
+//    	
+//    	double sstep = 0.01504285714;
+//
+//    	List<Point[]> rectPoints = new ArrayList<Point[]>();
+//    	
+//    	for(int i = 0; i < numRows;i++) {
+//    		double row1Factor = rdistance,
+//    			   row2Factor = rdistance+rwidth,
+//    			   col1Factor = sdistance+sstep*i,
+//    			   col2Factor = sdistance+sstep*i+sheight;
+//    		double[][] factors = new double[4][];
+//    		Point[] row1 = new Point[]{ new Point((1-row1Factor)*reference[0].x+row1Factor*reference[3].x,
+//    									 	      (1-row1Factor)*reference[0].y+row1Factor*reference[3].y),
+//								        new Point((1-row1Factor)*reference[1].x+row1Factor*reference[2].x,
+//										          (1-row1Factor)*reference[1].y+row1Factor*reference[2].y) };
+//    		Point[] row2 = new Point[]{ new Point((1-row2Factor)*reference[0].x+row2Factor*reference[3].x,
+//										 	      (1-row2Factor)*reference[0].y+row2Factor*reference[3].y),
+//								        new Point((1-row2Factor)*reference[1].x+row2Factor*reference[2].x,
+//										          (1-row2Factor)*reference[1].y+row2Factor*reference[2].y) };
+//        	Point[] points = new Point[4]; 
+//        	points[0] = new Point((1-col1Factor)*row1[0].x+col1Factor*row1[1].x,
+//        						  (1-col1Factor)*row1[0].y+col1Factor*row1[1].y);
+//        	points[1] = new Point((1-col2Factor)*row1[0].x+col2Factor*row1[1].x,
+//					  			  (1-col2Factor)*row1[0].y+col2Factor*row1[1].y);
+//        	points[2] = new Point((1-col2Factor)*row2[0].x+col2Factor*row2[1].x,
+//					  			  (1-col2Factor)*row2[0].y+col2Factor*row2[1].y);
+//        	points[3] = new Point((1-col1Factor)*row2[0].x+col1Factor*row2[1].x,
+//					  			  (1-col1Factor)*row2[0].y+col1Factor*row2[1].y);
+//    		rectPoints.add(points);
+//
+////    		rectPoints.add(i, new MatOfPoint(points));
+//    	}
+//    	
+//    	return rectPoints;
 		
 		//rectPoints.fromArray(points);
 //        Imgproc.drawContours(rgbaImage, rectPoints, -1, new Scalar(255,0,0,255));
