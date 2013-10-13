@@ -33,7 +33,7 @@ public class TestGrader {
 	public static String gradeStudentResponse(String studentResponse, String answerKey) {
 
 		String studentTestResult = "";
-		for(int i = 0; i < answerKey.length(); i+=2) {
+		for(int i = 0; i < answerKey.length()-1; i+=2) {
 			if(studentResponse.charAt(i) == answerKey.charAt(i)) {
 				studentTestResult += 'C';
 			} else if (studentResponse.charAt(i) == 'M'){
