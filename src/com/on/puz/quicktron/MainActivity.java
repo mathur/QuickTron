@@ -1,5 +1,6 @@
 package com.on.puz.quicktron;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -35,7 +36,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     private Mat                  mRgba;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
-    private ColorBlobDetector    mDetector;
+    private ScantronDetector     mDetector;
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
@@ -102,7 +103,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
-        mDetector = new ColorBlobDetector();
+        mDetector = new ScantronDetector();
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
@@ -169,9 +170,17 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         if (mIsColorSelected) {
             mDetector.process(mRgba);
-            List<MatOfPoint> contours = mDetector.getContours();
+            List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+            MatOfPoint contour = mDetector.getContour();
+            MatOfPoint orientationLine = mDetector.getOrientationLine();
+            if(contour != null) {
+            	contours.add(contour);
+            	if(orientationLine != null) {
+            		contours.add(orientationLine);
+            	}
+            }
             Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
+            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR,2);
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);

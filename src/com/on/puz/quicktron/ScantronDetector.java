@@ -2,6 +2,8 @@ package com.on.puz.quicktron;
 
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class ScantronDetector {
     private Scalar mColorRadius = new Scalar(0,50,50,0);
     private Mat mSpectrum = new Mat();
     private MatOfPoint mContour = null;
+    private MatOfPoint mOrientationLine = null;
 //    private static final int MIN_NULL_COUNT = 4;
 //    private int nullCount = 0;
 
@@ -134,15 +137,72 @@ public class ScantronDetector {
 //        	}
 //        }
         if(mContour != null) {
-//        	List<int[]> parallelPairs;
-//        	int longestEdge = -1;
-//        	double edgeSlope = 0;
-//        	int edgeLength;
-        	
+        	List<Integer> nearlyHoriz = new ArrayList<Integer>(),
+        				  nearlyVert  = new ArrayList<Integer>();
+        	int nPoints = (int)mContour.size().height;
+        	for(int i=0;i<nPoints;++i) {
+        		double[] a = mContour.get(i, 0),
+        				 b = mContour.get((i+1)%nPoints, 0);
+        		double dx = b[0]-a[0],
+        			   dy = b[1]-a[1];
+        		if(Math.abs(dx)>Math.abs(dy)) {
+        			nearlyHoriz.add(i);
+        		} else {
+        			nearlyVert.add(i);
+        		}
+        	}
+        	if(nearlyHoriz.size() < 2 || nearlyVert.size() < 2) {
+        		mOrientationLine = null;
+        		return;
+        	}
+        	Comparator<Integer> compare = new Comparator<Integer>() {
+				@Override
+				public int compare(Integer arg0, Integer arg1) {
+		        	int nPoints = (int)mContour.size().height;
+	        		double[] a = mContour.get(arg0, 0),
+	        				 b = mContour.get((arg0+1)%nPoints, 0);
+	        		double[] c = mContour.get(arg1, 0),
+	        				 d = mContour.get((arg1+1)%nPoints, 0);
+	        		double dx1 = b[0]-a[0],dy1 = b[1]-a[1],
+	        			   dx2 = d[0]-c[0],dy2 = d[1]-c[1];
+	        		double magSq1 = dx1*dx1+dy1*dy1,
+	        			   magSq2 = dx2*dx2+dy2*dy2;
+					return magSq1 < magSq2 ?  1 :
+						   magSq1 > magSq2 ? -1 :
+							   				  0;
+				}
+        	};
+        	Collections.sort(nearlyHoriz,compare);
+        	Collections.sort(nearlyVert,compare);
+        	int[] horiz = new int[]{nearlyHoriz.get(0),nearlyHoriz.get(1)},
+        		  vert  = new int[]{nearlyVert.get(0),nearlyVert.get(1)};
+    		double[] a = mContour.get(horiz[0], 0),
+	   				 b = mContour.get((horiz[0]+1)%nPoints, 0);
+	   		double[] c = mContour.get(vert[0], 0),
+	   				 d = mContour.get((vert[0]+1)%nPoints, 0);
+	   		double dx1 = b[0]-a[0],dy1 = b[1]-a[1],
+	   			   dx2 = d[0]-c[0],dy2 = d[1]-c[1];
+	   		boolean isLandscape = (dx1*dx1+dy1*dy1 > dx2*dx2+dy2*dy2);
+	   		Point[] orientationLine = new Point[2];
+	   		if(!isLandscape) {
+	   			orientationLine[0] = new Point((a[0]+b[0])/2, (a[1]+b[1])/2);
+	    		a = mContour.get(horiz[1], 0);
+	    		b = mContour.get((horiz[1]+1)%nPoints, 0);
+	   			orientationLine[1] = new Point((a[0]+b[0])/2, (a[1]+b[1])/2);
+	   		} else {
+	   			orientationLine[0] = new Point((c[0]+d[0])/2, (c[1]+d[1])/2);
+	    		c = mContour.get(vert[1], 0);
+	    		d = mContour.get((vert[1]+1)%nPoints, 0);
+	   			orientationLine[1] = new Point((c[0]+d[0])/2, (c[1]+d[1])/2);
+	   		}
+	   		mOrientationLine = new MatOfPoint(orientationLine);
         }
     }
 
     public MatOfPoint getContour() {
         return mContour;
+    }
+    public MatOfPoint getOrientationLine() {
+    	return mOrientationLine;
     }
 }
