@@ -12,6 +12,7 @@ import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -141,7 +142,32 @@ public class ScantronDetector {
         	
         }
     }
+    public void processRect(Mat rgbaImage) {
+    	List<Rect> rects = new ArrayList<Rect>();
+    	int numRows = 50;//should be 50
+    	double xoffset = 580.0;
+    	double yoffset = 30.0;
+    	
+    	double ydistance = 350.0;
+    	double width = 15.0;
+    	double length = 300.0;
+    	List<MatOfPoint> rectPoints = new ArrayList<MatOfPoint>(50);
+    	
+    	for(int i = 0; i < numRows;i++) {
+        	Point[] points = new Point[4];
+    		points[0] = new Point(yoffset*i+ydistance, xoffset);
+    		points[1] = new Point(yoffset*i+width+ydistance, xoffset);
+    		points[2] = new Point(yoffset*i+width+ydistance, xoffset+length);
+    		points[3] = new Point(yoffset*i+ydistance, xoffset+length);
 
+    		rectPoints.add(i, new MatOfPoint(points));
+    	}
+		
+		//rectPoints.fromArray(points);
+        Imgproc.drawContours(rgbaImage, rectPoints, -1, new Scalar(255,0,0,255));
+
+		//Imgproc.boundingRect(points);
+    }
     public MatOfPoint getContour() {
         return mContour;
     }

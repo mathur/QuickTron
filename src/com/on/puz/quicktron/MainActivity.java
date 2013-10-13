@@ -35,7 +35,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     private Mat                  mRgba;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
-    private ColorBlobDetector    mDetector;
+    private ScantronDetector    mDetector;
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
@@ -102,7 +102,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
-        mDetector = new ColorBlobDetector();
+        mDetector = new ScantronDetector();
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
@@ -178,6 +178,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
             Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
             mSpectrum.copyTo(spectrumLabel);
+            mDetector.processRect(mRgba);
         }
         return mRgba;
     }
