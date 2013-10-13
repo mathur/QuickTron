@@ -87,6 +87,8 @@ public class ViewAllTests extends Activity {
 		alert.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
 	        public void onClick(final DialogInterface dialog, final int whichButton) {
 	            final String value = input.getText().toString().trim();
+	            if (value.length()<=0)
+	            	dialog.cancel();
 	    		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 	    		startActivity(intent);
 	        }
