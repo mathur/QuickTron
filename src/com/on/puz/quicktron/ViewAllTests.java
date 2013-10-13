@@ -8,6 +8,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,11 +33,15 @@ public class ViewAllTests extends Activity {
 		//testNameInput = (EditText)findViewById(R.id.input_test_name);
 		addTestButton = (Button)findViewById(R.id.add_test_button);
         listView = (ListView)findViewById(R.id.all_tests);
-        ArrayList<Test> initial = db.getAllTests();
-       // ArrayList<Test> initial = new ArrayList<Test>();
+        
         ArrayList<String> scores = new ArrayList<String>();
         scores.add("3u42893");
         scores.add("2481894");
+        db.addTest(new Test("test",0, scores));
+        
+        ArrayList<Test> initial = db.getAllTests();
+       // ArrayList<Test> initial = new ArrayList<Test>();
+        
         //initial.add(new Test("test",0, scores));
         testItems = new ArrayAdapter<Test>(this, android.R.layout.simple_list_item_1, initial);
         addItemsFromDb();

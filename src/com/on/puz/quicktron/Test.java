@@ -108,7 +108,7 @@ public class Test {
      * @param newScores is the new set of scores to add to this item object, as a string
      */
     public void setScores(String newScores) {
-        ArrayList<String> arr = (ArrayList<String>) Arrays.asList(newScores.split(","));
+        ArrayList<String> arr = new ArrayList<String>(Arrays.asList(newScores.split(",")));
         this.scores = arr;
     }
     public String toString(){
