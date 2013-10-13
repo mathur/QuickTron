@@ -47,7 +47,6 @@ public class LaunchScreen extends Activity {
 	{
 		Intent intent = new Intent(this, ViewAllTests.class);
         startActivity(intent);
-
 	}
 
     public void sendSendGrid(View view)
@@ -69,6 +68,20 @@ public class LaunchScreen extends Activity {
         });
 
         thread.start();
+    }
+
+    public void showDirections(View view)
+    {
+        final AlertDialog.Builder newName = new AlertDialog.Builder(this);
+        newName.setTitle("Directions");
+        newName.setMessage("Hello");
+        AlertDialog alert = newName.create();
+        alert.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, final int whichButton) {
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 
 	@Override
