@@ -174,7 +174,8 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             MatOfPoint contour = mDetector.getContour();
             MatOfPoint orientationLine = mDetector.getOrientationLine();
-            List<MatOfPoint> answerGrid = mDetector.getAnswerGrid(); 
+            List<MatOfPoint> answerGrid = mDetector.getAnswerGrid();
+            List<MatOfPoint> blackLines = mDetector.getBlackLines(); 
 //            List<MatOfPoint> green = mDetector.getGreenishThings();
             if(contour != null) {
             	contours.add(contour);
@@ -183,6 +184,9 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             	}
             	if(answerGrid != null) {
             		Imgproc.drawContours(mRgba, answerGrid, -1, new Scalar(255,255,0,255), 2);
+            	}
+            	if(blackLines != null) {
+            		Imgproc.drawContours(mRgba, blackLines, -1, new Scalar(255,255,0,255), 2);
             	}
             }
 //            Log.e(TAG, "Contours count: " + contours.size());
