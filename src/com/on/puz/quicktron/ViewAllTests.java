@@ -1,10 +1,10 @@
 package com.on.puz.quicktron;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,23 +19,38 @@ import android.widget.Toast;
 
 public class ViewAllTests extends Activity {
 	
-	ArrayAdapter<String> testItems;
+	ArrayAdapter<Test> testItems;
 	EditText testNameInput;
 	Button addTestButton;
-	ListView listView;
-	
-	@Override
+	ListView mListView;
+	StableArrayAdapter mAdapter;
+    BackgroundContainer mBackgroundContainer;
+    boolean mSwiping = false;
+    boolean mItemPressed = false;
+    HashMap<Long, Integer> mItemIdTopMap = new HashMap<Long, Integer>();
+
+    private static final int SWIPE_DURATION = 250;
+    private static final int MOVE_DURATION = 150;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		 setContentView(R.layout.activity_view_all_tests);
+		 TestDbHelper db = TestDbHelper.getInstance(getApplicationContext());
 		//testNameInput = (EditText)findViewById(R.id.input_test_name);
 		addTestButton = (Button)findViewById(R.id.add_test_button);
         listView = (ListView)findViewById(R.id.all_tests);
-        ArrayList<String> sample = new ArrayList<String>();
-        sample.add("blah");
-        sample.add("blah2");
-        sample.add("blah3");
-        testItems = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        
+        ArrayList<String> scores = new ArrayList<String>();
+        scores.add("3u42893");
+        scores.add("2481894");
+        db.addTest(new Test("test",0, scores));
+        
+        ArrayList<Test> initial = db.getAllTests();
+       // ArrayList<Test> initial = new ArrayList<Test>();
+        
+        //initial.add(new Test("test",0, scores));
+        testItems = new ArrayAdapter<Test>(this, android.R.layout.simple_list_item_1, initial);
         addItemsFromDb();
         listView.setAdapter(testItems);
         listView.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -45,9 +60,6 @@ public class ViewAllTests extends Activity {
             	//call database stuff
             	Toast.makeText(getApplicationContext(), "button " + position + " clicked", Toast.LENGTH_SHORT).show();
             }
-
-			
-
         });
 	}
 	public void addItemsFromDb(){
@@ -55,7 +67,7 @@ public class ViewAllTests extends Activity {
 		//dummy data:
 		for(int i = 0; i < 20; i++)
 		{
-			testItems.add("test " + (i + 1));
+			//testItems.add("test " + (i + 1));
 		}
 		testItems.notifyDataSetChanged();
 	}

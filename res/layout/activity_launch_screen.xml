@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:keepScreenOn="true"
         android:text="@string/dummy_content"
         android:textColor="#33b5e5"
         android:textSize="50sp"
@@ -58,10 +57,18 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/new_test_label" 
-                android:onClick="scanNewTest"
-                    />
+                android:onClick="scanNewTest" />
             
         </LinearLayout>
+
+        <!-- <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Send Email via SendGrid"
+                android:id="@+id/btnSendGrid"
+                android:layout_gravity="center_horizontal|top"
+                android:singleLine="false"
+                android:onClick="sendSendGrid"/> -->
     </FrameLayout>
 
 </FrameLayout>
