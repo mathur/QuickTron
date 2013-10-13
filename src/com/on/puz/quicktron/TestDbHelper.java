@@ -1,7 +1,6 @@
 package com.on.puz.quicktron;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class TestDbHelper extends SQLiteOpenHelper {
 
@@ -26,7 +24,8 @@ public class TestDbHelper extends SQLiteOpenHelper {
     private static final String KEY_ANSWERKEY = "isAnswerKey";
     private static final String KEY_TESTNAME = "testName";
     private static final String KEY_SCORES = "scores";
-    
+    private static final String KEY_EMAIL = "email";
+
     private static TestDbHelper dbInstance = null; 
     /*
      * Constructor that sets up the TestDbHelper object
@@ -59,7 +58,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
         // created the sql query of type string, only create the table if it doesn't already exist
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_ITEMS + " ( "
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_ANSWERKEY
-                + " INTEGER, " + KEY_TESTNAME + " TEXT, " + KEY_SCORES + " TEXT)";
+                + " INTEGER, " + KEY_TESTNAME + " TEXT, " + KEY_SCORES + " TEXT, " + KEY_EMAIL + " TEXT)";
         db.execSQL(sql);
     }
 
@@ -91,6 +90,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
         values.put(KEY_ANSWERKEY, test.isAnswerKey());
         values.put(KEY_TESTNAME, test.getName());
         values.put(KEY_SCORES, test.getScoresString());
+        values.put(KEY_EMAIL, test.getEmail());
 
         // Inserting Row
         db.insert(TABLE_ITEMS, null, values);
@@ -113,13 +113,40 @@ public class TestDbHelper extends SQLiteOpenHelper {
     }
 
     /*
-     * Method that gets a test with the specified ID
+     * Method that gets all tests with the specified test name
      *
-     * @return a test object with the contents of the test entry
+     * @return an ArrayList of tests with the specified name
      */
-    public Test getTest(int id) {
+    public ArrayList<Test> getTestsSameName(String name) {
 
-        String sql = "SELECT * FROM " + TABLE_ITEMS + " WHERE " + KEY_ID + "=" + id;
+        String sql = "SELECT * FROM " + TABLE_ITEMS + " WHERE " + KEY_TESTNAME + "=" + name;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+
+        ArrayList<Test> testList = new ArrayList<Test>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                Test test = new Test();
+                test.setId(cursor.getInt(0));
+                test.setIsAnswerKey(cursor.getInt(1));
+                test.setTestName(cursor.getString(2));
+                test.setScores(cursor.getString(3));
+                testList.add(test);
+            } while (cursor.moveToNext());
+        }
+        return testList;
+    }
+
+    /*
+     * Method that gets all tests with the specified test name AND is the answer key
+     *
+     * @return the Test object
+     */
+    public Test getTestAnswerKey(String name) {
+
+        String sql = "SELECT * FROM " + TABLE_ITEMS + " WHERE " + KEY_TESTNAME + "=" + name + " AND KEY_ANSWERKEY = 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
@@ -132,27 +159,25 @@ public class TestDbHelper extends SQLiteOpenHelper {
                 test.setTestName(cursor.getString(2));
                 test.setScores(cursor.getString(3));
                 return test;
-            } while (cursor.moveToNext());
+            } while (false);
         }
-        else{
-            return null;
-        }
+        return null;
     }
 
     /*
-     * Method that gets all the items from the database and returns it in an ArrayList
+     * Method that gets all tests with the specified test name AND is NOT the answer key
      *
-     * @return an ArrayList with objects of type item ordered by status
+     * @return an ArrayList of test objects that are student responses
      */
-    public ArrayList<Test> getAllTests() {
-        ArrayList<Test> testList = new ArrayList<Test>();
-        // Select all query with ordering
-        String selectQuery = "SELECT  * FROM " + TABLE_ITEMS + " ORDER BY " + KEY_ID + " ASC";
+    public ArrayList<Test> getTestStudents(String name) {
+
+        String sql = "SELECT * FROM " + TABLE_ITEMS + " WHERE " + KEY_TESTNAME + "=" + name + " AND KEY_ANSWERKEY = 0";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(sql, null);
 
-        // looping through all rows and adding to list
+        ArrayList<Test> testList = new ArrayList<Test>();
+
         if (cursor.moveToFirst()) {
             do {
                 Test test = new Test();
@@ -160,13 +185,9 @@ public class TestDbHelper extends SQLiteOpenHelper {
                 test.setIsAnswerKey(cursor.getInt(1));
                 test.setTestName(cursor.getString(2));
                 test.setScores(cursor.getString(3));
-                // adding item to list
                 testList.add(test);
             } while (cursor.moveToNext());
         }
-        
-
-        // return the now filled test list
         return testList;
     }
 }

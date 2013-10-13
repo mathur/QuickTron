@@ -1,13 +1,11 @@
 package com.on.puz.quicktron;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class Test {
     private int id;
     private String testName;
     private int answerKey;
-    private ArrayList<String> scores;
+    private String scores;
+    private String email;
 
     /*
      * Constructor that sets up a test of name null
@@ -21,11 +19,12 @@ public class Test {
     /*
      * Constructor that sets up a test with specified parameters
      */
-    public Test(String newTestName, int isAnswerKey, ArrayList<String> scoreList) {
+    public Test(String newTestName, int isAnswerKey, String scoreList, String newEmail) {
         super();
         this.testName = newTestName;
         this.answerKey = isAnswerKey;
         this.scores = scoreList;
+        this.email = newEmail;
     }
 
     /*
@@ -39,6 +38,8 @@ public class Test {
 
     /*
      * Method to set the Id of a specific Test object
+     *
+     * SHOULD NEVER EVER EVER EVER EVER EVER BE USED!!!!!
      *
      * @param id is the desired id for the object currently being processed
      */
@@ -86,20 +87,30 @@ public class Test {
 
 
     /*
-     * Method to get the name of a specific Test object
+     * Method to return the scores in a string in CSV format
      *
      * @return the scores for each question, with each question being part of the string
      */
     public String getScoresString() {
-        String str = "";
-        for (int i = 0;i<scores.size(); i++) {
-            str = str+scores.get(i);
-            // Do not append comma at the end of last element
-            if(i<scores.size()-1){
-                str = str+",";
-            }
-        }
-        return str;
+        return scores;
+    }
+
+    /*
+     * Method that sets the scores of a test object, in CSV format
+     *
+     * @param newScores is the new set of scores to add to this item object, as a string
+     */
+    public void setScores(String newScores) {
+        scores = newScores;
+    }
+
+    /*
+     * Method to get the name of a specific Test object
+     *
+     * @return the scores for each question, with each question being part of the string
+     */
+    public String getEmail() {
+        return email;
     }
 
     /*
@@ -107,10 +118,10 @@ public class Test {
      *
      * @param newScores is the new set of scores to add to this item object, as a string
      */
-    public void setScores(String newScores) {
-        ArrayList<String> arr = new ArrayList<String>(Arrays.asList(newScores.split(",")));
-        this.scores = arr;
+    public void setEmail(String newEmail) {
+        scores = newEmail;
     }
+
     public String toString(){
     	return testName;
     }

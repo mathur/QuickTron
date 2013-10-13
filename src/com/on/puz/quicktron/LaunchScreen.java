@@ -7,8 +7,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -82,6 +80,12 @@ public class LaunchScreen extends Activity {
             }
         });
         alert.show();
+    }
+
+    public void clickAbout(View view)
+    {
+        Intent intent = new Intent(this, About.class);
+        startActivity(intent);
     }
 
 	@Override

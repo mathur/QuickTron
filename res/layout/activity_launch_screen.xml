@@ -70,6 +70,14 @@
                 android:onClick="showDirections"
                 android:singleLine="false"/>
 
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="About"
+                android:id="@+id/btnAbout"
+                android:layout_gravity="right|top"
+                android:onClick="clickAbout"/>
+
         <!-- <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
