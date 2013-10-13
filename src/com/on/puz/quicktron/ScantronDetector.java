@@ -291,7 +291,6 @@ public class ScantronDetector {
 	        mContour = contour;
         }
     }
-<<<<<<< HEAD
     public double distance(Point p1, Point p2) { //guys, i'm clearly good at this shit #burnout
     	return Math.sqrt(Math.pow((p1.x-p2.x),2) + Math.pow((p1.y-p2.y),2));
     }
@@ -325,7 +324,6 @@ public class ScantronDetector {
 
 		//Imgproc.boundingRect(points);
     }
-=======
     
     private double _cross(Point a,Point b) {
     	return (a.x*b.y-a.y*b.x);
@@ -337,7 +335,6 @@ public class ScantronDetector {
     	return new Point(a1.x+t*r.x,a1.y+t*r.y);
     }
 
->>>>>>> d2cd68b401c6938ac5d7b7a948b184b8395fad73
     public MatOfPoint getContour() {
         return new MatOfPoint(mContour);
     }

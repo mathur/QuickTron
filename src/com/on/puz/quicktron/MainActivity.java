@@ -170,7 +170,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         mRgba = inputFrame.rgba();
 
         if (mIsColorSelected) {
-            //mDetector.process(mRgba);
+            mDetector.process(mRgba);
             List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             MatOfPoint contour = mDetector.getContour();
             MatOfPoint orientationLine = mDetector.getOrientationLine();
@@ -193,7 +193,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
             Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
             mSpectrum.copyTo(spectrumLabel);
-            //test code for JOE HOLYSHIT
+
             Point[] reference = new Point[4];
             
             reference[0] = new Point(50,0);
