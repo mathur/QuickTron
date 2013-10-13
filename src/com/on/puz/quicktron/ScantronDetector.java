@@ -149,6 +149,7 @@ public class ScantronDetector {
         		}
         	}
         	if(nearlyHoriz.size() < 2 || nearlyVert.size() < 2) {
+        		mContour = null;
         		mOrientationLine = null;
     	        mGreens.clear();
         		return;
@@ -253,32 +254,32 @@ public class ScantronDetector {
 	        if(isLandscape) {
 	        	if(Math.signum(orientationLine[1].x-orientationLine[0].x) == Math.signum(mContour[vert[0]].x - mContour[vert[1]].x)) {
 	        		edges[0] = vert[0];
-	        		edges[2] = vert[1];
+	        		edges[3] = vert[1];
 	        	} else {
 	        		edges[0] = vert[1];
-	        		edges[2] = vert[0];
+	        		edges[3] = vert[0];
 	        	}
 	        	if(Math.signum(mContour[(edges[0]+1)%mContour.length].y-mContour[edges[0]].y) == Math.signum(mContour[horiz[0]].y-mContour[horiz[1]].y)) {
 	        		edges[1] = horiz[0];
-	        		edges[3] = horiz[1];
+	        		edges[2] = horiz[1];
 	        	} else {
 	        		edges[1] = horiz[1];
-	        		edges[3] = horiz[0];
+	        		edges[2] = horiz[0];
 	        	}
 	        } else {
 	        	if(Math.signum(orientationLine[1].y-orientationLine[0].y) == Math.signum(mContour[horiz[0]].y - mContour[horiz[1]].y)) {
 	        		edges[0] = horiz[0];
-	        		edges[2] = horiz[1];
+	        		edges[3] = horiz[1];
 	        	} else {
 	        		edges[0] = horiz[1];
-	        		edges[2] = horiz[0];
+	        		edges[3] = horiz[0];
 	        	}
 	        	if(Math.signum(mContour[(edges[0]+1)%mContour.length].x-mContour[edges[0]].x) == Math.signum(mContour[vert[0]].x-mContour[vert[1]].x)) {
 	        		edges[1] = vert[0];
-	        		edges[3] = vert[1];
+	        		edges[2] = vert[1];
 	        	} else {
 	        		edges[1] = vert[1];
-	        		edges[3] = vert[0];
+	        		edges[2] = vert[0];
 	        	}
 	        }
 	        Point[] contour = new Point[4];
@@ -336,6 +337,9 @@ public class ScantronDetector {
     }
 
     public MatOfPoint getContour() {
+    	if(mContour == null) {
+    		return null;
+    	}
         return new MatOfPoint(mContour);
     }
     public MatOfPoint getOrientationLine() {
