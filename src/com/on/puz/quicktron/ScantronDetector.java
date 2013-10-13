@@ -34,6 +34,7 @@ public class ScantronDetector {
     private Point[] mOrientationLine = null;
     private List<MatOfPoint> mGreens = new ArrayList<MatOfPoint>();
     private List<Point[]> mRows = null;
+    private List<Point[]> mBlackLines = null;
 //    private static final int MIN_NULL_COUNT = 4;
 //    private int nullCount = 0;
 
@@ -343,8 +344,21 @@ public class ScantronDetector {
     }
     public List<Point[]> processRect(Point[] reference,Mat hsv) {
     	List<Point[]> ret = new ArrayList<Point[]>();
-    	final Point r = new Point(reference[1].x-reference[0].x,reference[1].y-reference[0].y),
-      		        s = new Point(reference[3].x-reference[0].x,reference[3].y-reference[0].y);
+    	double minX = -1,maxX = -1,minY = -1,maxY = -1;
+    	for(Point p:reference) {
+    		if(minX < 0 || p.x < minX) {
+    			minX = p.x;
+    		}
+    		if(maxX < 0 || p.x > maxX) {
+    			maxX = p.x;
+    		}
+    		if(minY < 0 || p.y < minY) {
+    			minY = p.y;
+    		}
+    		if(maxY < 0 || p.y > maxY) {
+    			maxY = p.y;
+    		}
+    	}
         Core.inRange(hsv, new Scalar(0,0,0,0), new Scalar(255,255,mLowerBound.val[2]-20,255), mMask);
         Mat kernel = Mat.ones(3, 3, CvType.CV_32F);
         Imgproc.dilate(mMask, mMask, kernel);
@@ -362,9 +376,9 @@ public class ScantronDetector {
         		continue;
         	}
         	Point p = arr[0];
-        	double sFactor = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
-        	if((p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y) > 0.1 &&
-        	   sFactor > 0.8) {
+        	if((p.x-minX) > 0.05*(maxX-minX) &&
+        	   (p.y-minY) > 0.8*(maxY-minY) &&
+        	   (p.y-minY) < 0.87*(maxY-minY)) {
         		ret.add(contour.toArray());	
         	}
         }
@@ -373,9 +387,6 @@ public class ScantronDetector {
         for(Point[] contour: ret) {
         	double area = Math.abs(Imgproc.contourArea(new MatOfPoint(contour)));
         	Point p = contour[0];
-        	double rProj = (p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y),
-         		   sProj = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
-        	Log.d("sProj",""+sProj);
         	if(/*sProj > 0.5 && Imgproc.isContourConvex(new MatOfPoint(contour)) &&*/ (maxContour == null || area > maxArea)) {
         		maxContour = contour;
         		maxArea = area;
@@ -384,82 +395,73 @@ public class ScantronDetector {
         if(maxContour == null) {
         	return null;
         }
-        double minS = 0,maxS = 0;
-        double minR = 0;
+        double minContY = 0,maxContY = 0;
+        double minContX = 0;
         for(int i=0;i<maxContour.length;++i) {
         	Point p = maxContour[i];
-        	double rProj = (p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y),
-        		   sProj = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
-        	if(i == 0 || sProj < minS) {
-        		minS = sProj;
+        	if(i == 0 || p.y < minContY) {
+        		minContY = p.y;
         	}
-        	if(i == 0 || sProj > maxS) {
-        		maxS = sProj;
+        	if(i == 0 || p.y > maxContY) {
+        		maxContY = p.y;
         	}
-        	if(i == 0 || rProj > minR) {
-        		minR = rProj;
+        	if(i == 0 || p.x > minContX) {
+        		minContX = p.x;
         	}
         }
         Collections.sort(ret,new Comparator<Point[]>() {
 			@Override
 			public int compare(Point[] lhs, Point[] rhs) {
-				double rProj1 = (lhs[0].x*r.x+lhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y),
-					   rProj2 = (rhs[0].x*r.x+rhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y);
-				return Double.compare(rProj1, rProj2);
+				return Double.compare(lhs[0].x, rhs[0].x);
 			}
 		});
-        Log.d("black line bounds","S:["+minS+","+maxS+"],R:["+minR+",inf)");
         List<Point[]> blackLines = new ArrayList<Point[]>();
     	MatOfPoint2f maxCont = new MatOfPoint2f(maxContour);
-    	Imgproc.approxPolyDP(maxCont,maxCont,20,true);
+    	Imgproc.approxPolyDP(maxCont,maxCont,10,true);
     	maxContour = maxCont.toArray();
 //        blackLines.add(maxContour);
         for(Point[] contour: ret) {
         	MatOfPoint2f cont = new MatOfPoint2f(contour);
-        	Imgproc.approxPolyDP(cont,cont,20,true);
+        	Imgproc.approxPolyDP(cont,cont,10,true);
         	contour = cont.toArray();
         	if(contour.length < 2) {
         		continue;
         	}
         	boolean add = false;
-        	double sMin = 0,sMax = 0;
-        	double rMin = 0;
+        	double yMin = 0,yMax = 0;
+        	double xMin = 0;
             for(int i=0;i<contour.length;++i) {
             	Point p = contour[i];
-            	double rProj = (p.x*r.x+p.y*r.y)/(r.x*r.x+r.y*r.y),
-            		   sProj = (p.x*s.x+p.y*s.y)/(s.x*s.x+s.y*s.y);
-            	if(i == 0 || sProj < sMin) {
-            		sMin = sProj;
+            	if(i == 0 || p.y < yMin) {
+            		yMin = p.y;
             	}
-            	if(i == 0 || sProj > sMax) {
-            		sMax = sProj;
+            	if(i == 0 || p.y > yMax) {
+            		yMax = p.y;
             	}
-            	if(i == 0 || rProj < rMin) {
-            		rMin = rProj;
+            	if(i == 0 || p.x < xMin) {
+            		xMin = p.x;
             	}
             }
-            double sMid = (sMin+sMax)/2.0;
-            Log.d("black line test","S:"+sMid+"R:"+minR+"");
+            double yMid = (yMin+yMax)/2.0;
             if(blackLines.size() < 3) {
-            	add = (rMin > minR && sMid > minS-0.01 && sMid < maxS+0.01);
+            	add = (xMin > minX && yMid > minY && yMid < maxY);
             } else {
         		Point[] last = blackLines.get(blackLines.size()-1),
-        				nextToLast = blackLines.get(0);
+        				nextToLast = blackLines.get(blackLines.size()-2);
         		Point lines = new Point((last[1].x+last[0].x)/2.0-(nextToLast[1].x+nextToLast[0].x)/2.0,
         							    (last[1].y+last[0].y)/2.0-(nextToLast[1].y+nextToLast[0].y)/2.0);
         		Point mid = new Point((contour[0].x+contour[1].x)/2.0,(contour[0].y+contour[1].y)/2.0);
         		Point lineToCurr = new Point(mid.x-(last[1].x+last[0].x)/2.0,
         									 mid.y-(last[1].y+last[0].y)/2.0);
-        		if(lineToCurr.y > 0 && Math.abs(lines.x*lineToCurr.x+lines.y*lineToCurr.y) >= 0.8*Math.sqrt(lines.x*lines.x+lines.y*lines.y)*Math.sqrt(lineToCurr.x*lineToCurr.x+lineToCurr.y*lineToCurr.y)) {
-            		add = (Math.signum(_cross(lineToCurr,new Point(contour[0].x-mid.x,contour[0].y-mid.y))) !=
-             			   Math.signum(_cross(lineToCurr,new Point(contour[1].x-mid.x,contour[1].y-mid.y))));
+        		if(lineToCurr.x > 0 && xMin > minContX && lines.x*lineToCurr.x+lines.y*lineToCurr.y >= 0.6*Math.sqrt(lines.x*lines.x+lines.y*lines.y)*Math.sqrt(lineToCurr.x*lineToCurr.x+lineToCurr.y*lineToCurr.y)) {
+            		add = (Math.signum(_cross(lines,new Point(contour[0].x-mid.x,contour[0].y-mid.y))) !=
+             			   Math.signum(_cross(lines,new Point(contour[1].x-mid.x,contour[1].y-mid.y))));
         		}
             }
         	if(add) {
             	Point[] pts = cont.toArray();
         		if((pts.length == 2 || pts.length == 4) &&
-        		   (Math.abs(pts[0].x-pts[1].x) > Math.abs(pts[0].y-pts[1].y)) /*&& 
-        		   Math.abs((pts[1].x-pts[0].x)*r.x+(pts[1].y-pts[0].y)*r.y)/(r.x*r.x+r.y*r.y) < 0.2*/) {
+        		   (Math.abs(pts[0].x-pts[1].x) < Math.abs(pts[0].y-pts[1].y))) {
         			blackLines.add(pts);
         		}
             }
@@ -467,14 +469,47 @@ public class ScantronDetector {
         Collections.sort(blackLines,new Comparator<Point[]>() {
 			@Override
 			public int compare(Point[] lhs, Point[] rhs) {
-				double rProj1 = (lhs[0].x*r.x+lhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y),
-					   rProj2 = (rhs[0].x*r.x+rhs[0].y*r.y)/Math.sqrt(r.x*r.x+r.y*r.y);
-				return Double.compare(rProj1, rProj2);
+				return Double.compare(lhs[0].x, rhs[0].x);
 			}
 		});
         
+        if(blackLines.size() >= 50) {
+        	if(mRows == null) {
+        		mRows = new ArrayList<Point[]>();
+        	}
+        	mRows.clear();
+        	Point s = new Point(reference[1].x-reference[0].x,reference[1].y-reference[0].y),
+        	      r = new Point(reference[3].x-reference[0].x,reference[3].y-reference[0].y);
+        	double rdistance = 0.13442105263; 
+        	double sdistance = 0.0834285714; 
+    
+        	double sheight = 0.01514285714; 
+        	double rwidth  = 0.36842105263;
+        	
+        	double sstep = 0.01504285714;
+        	for(int i=blackLines.size()-50;i<blackLines.size();++i) {
+        		Point[] line = blackLines.get(i);
+        		Point p;
+        		if(line[0].y < line[1].y) {
+        			p = line[0];
+        		} else {
+        			p = line[1];
+        		}
+        		Point[] rect = new Point[4];
+        		rect[0] = new Point(p.x-rdistance*r.x-sdistance*s.x,p.y-rdistance*r.y+sdistance*s.y);
+        		rect[1] = new Point(rect[0].x-rwidth*r.x,rect[0].y-rwidth*r.y);
+        		rect[2] = new Point(rect[0].x-rwidth*r.x+sheight*s.x,rect[0].y-rwidth*r.y+sheight*s.y);
+        		rect[3] = new Point(rect[0].x+sheight*s.x,rect[0].y+sheight*s.y);
+        		Log.d("Rect X",""+rect[0].x+","+rect[1].x+","+rect[2].x+","+rect[3].x);
+        		Log.d("Rect Y",""+rect[0].y+","+rect[1].y+","+rect[2].y+","+rect[3].y);
+        		mRows.add(rect);
+        	}
+        }
+        mBlackLines = blackLines;
+        return mRows;
+        
 //        return ret;
-        return blackLines;
+//        return blackLines;
 //        
 //    	for(int i=0;i<reference.length;++i) {
 //    		Log.d("Pt " + (i+1), "("+reference[i].x+","+reference[i].y+")");
@@ -606,6 +641,16 @@ public class ScantronDetector {
     	}
     	List<MatOfPoint> ret = new ArrayList<MatOfPoint>();
     	for(Point[] row: mRows) {
+    		ret.add(new MatOfPoint(row));
+    	}
+    	return ret;
+    }
+    public List<MatOfPoint> getBlackLines() {
+    	if(mBlackLines == null) {
+    		return null;
+    	}
+    	List<MatOfPoint> ret = new ArrayList<MatOfPoint>();
+    	for(Point[] row: mBlackLines) {
     		ret.add(new MatOfPoint(row));
     	}
     	return ret;
