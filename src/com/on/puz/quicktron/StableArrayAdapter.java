@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.on.puz.quicktron;
+package com.on.puz.quicktron; 
 
 import java.util.HashMap;
 import java.util.List;
