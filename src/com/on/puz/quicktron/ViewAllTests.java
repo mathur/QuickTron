@@ -4,12 +4,11 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,9 +52,6 @@ public class ViewAllTests extends Activity {
             	//call database stuff
             	Toast.makeText(getApplicationContext(), "button " + position + " clicked", Toast.LENGTH_SHORT).show();
             }
-
-			
-
         });
 	}
 	public void addItemsFromDb(){
