@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">QuickTron</string>
-    <string name="title_activity_launch_screen">LaunchScreen</string>
+    <string name="title_activity_launch_screen">QuickTron</string>
     <string name="dummy_content">QUICK-TRON</string>
     <string name="new_test_label">New Test</string>
     <string name="view_tests_label">Existing\nTests</string>
