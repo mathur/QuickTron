@@ -201,18 +201,19 @@ public class TestDbHelper extends SQLiteOpenHelper {
      */
     public ArrayList<String> getTestNames() {
 
-        String sql = "SELECT * FROM " + TABLE_ITEMS + ")";
+        String sql = "SELECT "+KEY_TESTNAME+" FROM " + TABLE_ITEMS;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
-
+x
         ArrayList<String> nameList = new ArrayList<String>();
 
         if (cursor.moveToFirst()) {
             do {
                 nameList.add(cursor.getString(2));
-            } while (cursor.moveToNext());
+            } while (cursor.moveToNext() && !cursor.isNull(2));
         }
+        cursor.close();
         ArrayList cleanedNames = new ArrayList();
 
         HashSet hs = new HashSet();
