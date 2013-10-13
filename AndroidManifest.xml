@@ -26,11 +26,9 @@
             </intent-filter>
         </activity>
         <activity
-
             android:name="com.on.puz.quicktron.ViewAllTests"
-
-            android:label="@string/title_activity_view_all_tests" >
-
+            android:label="@string/title_activity_view_all_tests"
+            android:theme="@style/FullscreenTheme" >
         </activity>
 
     </application>
