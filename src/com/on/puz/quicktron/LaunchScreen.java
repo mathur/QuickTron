@@ -1,8 +1,5 @@
 package com.on.puz.quicktron;
 
-
-import com.on.puz.quicktron.util.SystemUiHider;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
