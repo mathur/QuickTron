@@ -28,8 +28,8 @@ public class ScantronDetector {
     // Color radius for range checking in HSV color space
     private Scalar mColorRadius = new Scalar(0,50,50,0);
     private Mat mSpectrum = new Mat();
-    private MatOfPoint mContour = null;
-    private MatOfPoint mOrientationLine = null;
+    private Point[] mContour = null;
+    private Point[] mOrientationLine = null;
 //    private static final int MIN_NULL_COUNT = 4;
 //    private int nullCount = 0;
 
@@ -128,7 +128,7 @@ public class ScantronDetector {
             }
         }
 //        if(maxContour != null) {
-    	mContour = maxContour;
+    	mContour = maxContour.toArray();
 //        	nullCount = 0;
 //        } else {
 //    		nullCount++;
@@ -139,12 +139,12 @@ public class ScantronDetector {
         if(mContour != null) {
         	List<Integer> nearlyHoriz = new ArrayList<Integer>(),
         				  nearlyVert  = new ArrayList<Integer>();
-        	int nPoints = (int)mContour.size().height;
+        	int nPoints = (int)mContour.length;
         	for(int i=0;i<nPoints;++i) {
-        		double[] a = mContour.get(i, 0),
-        				 b = mContour.get((i+1)%nPoints, 0);
-        		double dx = b[0]-a[0],
-        			   dy = b[1]-a[1];
+        		Point a = mContour[i],
+        			  b = mContour[(i+1)%nPoints];
+        		double dx = b.x-a.x,
+        			   dy = b.y-a.y;
         		if(Math.abs(dx)>Math.abs(dy)) {
         			nearlyHoriz.add(i);
         		} else {
@@ -158,13 +158,13 @@ public class ScantronDetector {
         	Comparator<Integer> compare = new Comparator<Integer>() {
 				@Override
 				public int compare(Integer arg0, Integer arg1) {
-		        	int nPoints = (int)mContour.size().height;
-	        		double[] a = mContour.get(arg0, 0),
-	        				 b = mContour.get((arg0+1)%nPoints, 0);
-	        		double[] c = mContour.get(arg1, 0),
-	        				 d = mContour.get((arg1+1)%nPoints, 0);
-	        		double dx1 = b[0]-a[0],dy1 = b[1]-a[1],
-	        			   dx2 = d[0]-c[0],dy2 = d[1]-c[1];
+		        	int nPoints = (int)mContour.length;
+	        		Point a = mContour[arg0],
+	          			  b = mContour[(arg0+1)%nPoints];
+	        		Point c = mContour[arg1],
+	          			  d = mContour[(arg1+1)%nPoints];
+	        		double dx1 = b.x-a.x,dy1 = b.y-a.y,
+	        			   dx2 = d.x-c.x,dy2 = d.y-c.y;
 	        		double magSq1 = dx1*dx1+dy1*dy1,
 	        			   magSq2 = dx2*dx2+dy2*dy2;
 					return magSq1 < magSq2 ?  1 :
@@ -176,33 +176,33 @@ public class ScantronDetector {
         	Collections.sort(nearlyVert,compare);
         	int[] horiz = new int[]{nearlyHoriz.get(0),nearlyHoriz.get(1)},
         		  vert  = new int[]{nearlyVert.get(0),nearlyVert.get(1)};
-    		double[] a = mContour.get(horiz[0], 0),
-	   				 b = mContour.get((horiz[0]+1)%nPoints, 0);
-	   		double[] c = mContour.get(vert[0], 0),
-	   				 d = mContour.get((vert[0]+1)%nPoints, 0);
-	   		double dx1 = b[0]-a[0],dy1 = b[1]-a[1],
-	   			   dx2 = d[0]-c[0],dy2 = d[1]-c[1];
+    		Point a = mContour[horiz[0]],
+        		  b = mContour[(horiz[0]+1)%nPoints];
+      		Point c = mContour[vert[0]],
+			      d = mContour[(vert[0]+1)%nPoints];
+	   		double dx1 = b.x-a.x,dy1 = b.y-a.y,
+	   			   dx2 = d.x-c.x,dy2 = d.y-c.y;
 	   		boolean isLandscape = (dx1*dx1+dy1*dy1 > dx2*dx2+dy2*dy2);
 	   		Point[] orientationLine = new Point[2];
 	   		if(!isLandscape) {
-	   			orientationLine[0] = new Point((a[0]+b[0])/2, (a[1]+b[1])/2);
-	    		a = mContour.get(horiz[1], 0);
-	    		b = mContour.get((horiz[1]+1)%nPoints, 0);
-	   			orientationLine[1] = new Point((a[0]+b[0])/2, (a[1]+b[1])/2);
+	   			orientationLine[0] = new Point((a.x+b.x)/2, (a.y+b.y)/2);
+	    		a = mContour[horiz[1]];
+	    		b = mContour[(horiz[1]+1)%nPoints];
+	   			orientationLine[1] = new Point((a.x+b.x)/2, (a.y+b.y)/2);
 	   		} else {
-	   			orientationLine[0] = new Point((c[0]+d[0])/2, (c[1]+d[1])/2);
-	    		c = mContour.get(vert[1], 0);
-	    		d = mContour.get((vert[1]+1)%nPoints, 0);
-	   			orientationLine[1] = new Point((c[0]+d[0])/2, (c[1]+d[1])/2);
+	   			orientationLine[0] = new Point((c.x+d.x)/2, (c.y+d.y)/2);
+	    		c = mContour[vert[1]];
+	    		d = mContour[(vert[1]+1)%nPoints];
+	   			orientationLine[1] = new Point((c.x+d.x)/2, (c.y+d.y)/2);
 	   		}
-	   		mOrientationLine = new MatOfPoint(orientationLine);
+	   		mOrientationLine = orientationLine;
         }
     }
 
     public MatOfPoint getContour() {
-        return mContour;
+        return new MatOfPoint(mContour);
     }
     public MatOfPoint getOrientationLine() {
-    	return mOrientationLine;
+    	return new MatOfPoint(mOrientationLine);
     }
 }
