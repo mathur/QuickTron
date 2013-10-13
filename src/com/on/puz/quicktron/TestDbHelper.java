@@ -1,6 +1,7 @@
 package com.on.puz.quicktron;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -133,6 +134,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
                 test.setIsAnswerKey(cursor.getInt(1));
                 test.setTestName(cursor.getString(2));
                 test.setScores(cursor.getString(3));
+                test.setEmail(cursor.getString(4));
                 testList.add(test);
             } while (cursor.moveToNext());
         }
@@ -158,6 +160,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
                 test.setIsAnswerKey(cursor.getInt(1));
                 test.setTestName(cursor.getString(2));
                 test.setScores(cursor.getString(3));
+                test.setEmail(cursor.getString(4));
                 return test;
             } while (false);
         }
@@ -185,9 +188,39 @@ public class TestDbHelper extends SQLiteOpenHelper {
                 test.setIsAnswerKey(cursor.getInt(1));
                 test.setTestName(cursor.getString(2));
                 test.setScores(cursor.getString(3));
+                test.setEmail(cursor.getString(4));
                 testList.add(test);
             } while (cursor.moveToNext());
         }
         return testList;
+    }
+    /*
+     * Method that gets all test names
+     *
+     * @return an ArrayList of strings which are the names of all the tests
+     */
+    public ArrayList<String> getTestNames() {
+
+        String sql = "SELECT "+KEY_TESTNAME+" FROM " + TABLE_ITEMS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+x
+        ArrayList<String> nameList = new ArrayList<String>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                nameList.add(cursor.getString(2));
+            } while (cursor.moveToNext() && !cursor.isNull(2));
+        }
+        cursor.close();
+        ArrayList cleanedNames = new ArrayList();
+
+        HashSet hs = new HashSet();
+        hs.addAll(cleanedNames);
+        cleanedNames.clear();
+        cleanedNames.addAll(hs);
+
+        return cleanedNames;
     }
 }

@@ -601,12 +601,37 @@ public class ScantronDetector {
         	return true;
         }
 	}
-	public static void markStudentTest(Mat mRgba, List<Point> points, String studentTestResult) {
-		
+	public static void markStudentTest(Mat mRgba, Point[][] answers, String studentTestResult) {
+		for(int i = 0; i < answers.length; i++) {
+			if (studentTestResult.charAt(i) == 'W') {
+				Core.rectangle(	mRgba, 
+								answers[i][0], 
+								new Point(answers[i][3].x - (answers[i][0].y - answers[i][3].y), answers[i][3].y), 
+								new Scalar(255,0,0),
+								-1
+								);
+			} else if (studentTestResult.charAt(i) == 'O') {
+				Core.rectangle(	mRgba, 
+						answers[i][0], 
+						new Point(answers[i][3].x - (answers[i][0].y - answers[i][3].y), answers[i][3].y), 
+						new Scalar(0,255,0),
+						-1
+						);
+			} else if (studentTestResult.charAt(i) == 'M') {
+				Core.rectangle(	mRgba, 
+						answers[i][0], 
+						new Point(answers[i][3].x - (answers[i][0].y - answers[i][3].y), answers[i][3].y), 
+						new Scalar(255,255,0),
+						-1
+						);
+			}
+		}
 	}
+	
 	private double _cross(Point a,Point b) {
     	return (a.x*b.y-a.y*b.x);
     }
+	
     private Point _intersect(Point a1,Point b1,Point a2,Point b2) {
     	Point r = new Point(b1.x-a1.x,b1.y-a1.y),
     		  s = new Point(b2.x-a2.x,b2.y-a2.y);

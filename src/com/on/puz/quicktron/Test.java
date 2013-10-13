@@ -19,11 +19,11 @@ public class Test {
     /*
      * Constructor that sets up a test with specified parameters
      */
-    public Test(String newTestName, int isAnswerKey, String scoreList, String newEmail) {
+    public Test(String newTestName, int isAnswerKey, String answerList, String newEmail) {
         super();
         this.testName = newTestName;
         this.answerKey = isAnswerKey;
-        this.scores = scoreList;
+        this.scores = answerList;
         this.email = newEmail;
     }
 
