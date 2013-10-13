@@ -205,7 +205,6 @@ public class TestDbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
-x
         ArrayList<String> nameList = new ArrayList<String>();
 
         if (cursor.moveToFirst()) {

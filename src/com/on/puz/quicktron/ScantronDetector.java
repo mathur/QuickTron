@@ -306,7 +306,22 @@ public class ScantronDetector {
 	        }
 	        contour[contour.length-1] = first;
 	        mContour = contour;
-	        mRows = processRect(contour,mHsvMat);
+	        mRows = processRect(contour,rgbaImage);
+
+	        if(mRows != null) {
+	        	Point[][] p = new Point[50][5];
+	        	for(int i = 0; i < mRows.size(); i++) {
+	        		for(int j = 0; j < mRows.get(i).length; j++) {
+	        			p[i][j] = mRows.get(i)[j];
+	        		}
+	        	}
+	        	boolean[][] asdf = getFillIn(p, rgbaImage);
+	        	for(int i = 0; i < asdf.length; i++) {
+	        		for(int j = 0; j < asdf[i].length; j++) {
+	        			Log.d("boolean", ""+asdf[i][j]);
+	        		}
+	        	}
+	        }
 //	        mRows = new ArrayList<Point[]>();
 //            List<Point[]> blackLines = processRect(contour,mHsvMat);
 	        return;
@@ -573,10 +588,10 @@ public class ScantronDetector {
 			double yoffset = (answers[i][1].y) - answers[i][0].y/5;
 			for(int j = 0; j < 5; j++) { 
 				List<Point> r = new ArrayList<Point>();
-				r.add(new Point(answers[i][0].x + xoffset*j, answers[i][0].y + yoffset*j));
-				r.add(new Point(answers[i][0].x + xoffset*(j+1), answers[i][0].y + yoffset*(j+1)));
-				r.add(new Point(answers[i][0].x + xoffset*(j+1), answers[i][0].y + yoffset*(j+1)-width));
-				r.add(new Point(answers[i][0].x + xoffset*j, answers[i][0].y + xoffset*j-width));
+				r.add(new Point(Math.max(answers[i][0].x,0) + xoffset*j, Math.max(answers[i][0].y,0) + yoffset*j));
+				r.add(new Point(Math.max(answers[i][0].x,0) + xoffset*(j+1), Math.max(answers[i][0].y,0) + yoffset*(j+1)));
+				r.add(new Point(Math.max(answers[i][0].x,0) + xoffset*(j+1), Math.max(answers[i][0].y,0) + yoffset*(j+1)-width));
+				r.add(new Point(Math.max(answers[i][0].x,0) + xoffset*j, Math.max(answers[i][0].y,0) + xoffset*j-width));
 				answerFill[i][j] = checkFill(r, hsv);
 			}
 		}
@@ -585,9 +600,13 @@ public class ScantronDetector {
     	
     }
     private boolean checkFill(List<Point> r, Mat hsv) {
-    	Point[] p = (Point[]) r.toArray();
+    	Point[] p = new Point[4];
+    	for(int i = 0; i < 4; i++) {
+    		p[i] = new Point(r.get(i).x, r.get(i).y);
+    	}
     	MatOfPoint m = new MatOfPoint(p);
-        Rect rect = Imgproc.boundingRect(m);
+    	Log.d("matofp", p[0].toString()+" "+p[1].toString()+" "+p[2].toString()+" "+p[3].toString());
+        Rect rect = new Rect(p[1],p[3]);
         Mat touchedRegionHsv = hsv.submat(rect);
         Scalar mBlobColorHsv = Core.sumElems(touchedRegionHsv);
         int pointCount = m.width()*m.height();

@@ -192,7 +192,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 //            Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR,2);
             
-
+            
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
         }
