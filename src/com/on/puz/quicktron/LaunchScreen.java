@@ -1,16 +1,19 @@
 package com.on.puz.quicktron;
 
+import com.github.sendgrid.SendGrid;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class LaunchScreen extends Activity {
-
 
 	public void scanNewTest(View view)
 	{
@@ -46,6 +49,21 @@ public class LaunchScreen extends Activity {
         startActivity(intent);
 
 	}
+
+    public void sendSendGrid(View view)
+    {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SendGrid sendgrid = new SendGrid("rohan32", "hackru");
+        sendgrid.addTo("rohanmathur34@gmail.com");
+        sendgrid.setFrom("rohan@rmathur.com");
+        sendgrid.setSubject("Subj");
+        sendgrid.setText("Hi");
+
+        sendgrid.send();
+    }
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
