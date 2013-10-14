@@ -5,7 +5,7 @@ ScanTron grading for mobile devices
 
 Created at HackRU Fall 2013
 
-WARNING: Will eat your cat and possibly cause a nuclear destruction
+WARNING: Will eat your cat and possibly cause a nuclear destruction and poop rainbows
 
 by:
 Aana Bansal (aanabansal)
