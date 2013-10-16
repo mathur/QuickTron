@@ -1,9 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0099cc"
-    tools:context=".LaunchScreen" >
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#0099cc"
+             tools:context=".LaunchScreen">
 
     <!--
          The primary full-screen view. This can be replaced with whatever view
@@ -12,14 +12,14 @@
     -->
 
     <TextView
-        android:id="@+id/fullscreen_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/dummy_content"
-        android:textColor="#33b5e5"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+            android:id="@+id/fullscreen_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/dummy_content"
+            android:textColor="#33b5e5"
+            android:textSize="50sp"
+            android:textStyle="bold"/>
 
     <!--
          This FrameLayout insets its children based on system windows using
@@ -27,73 +27,76 @@
     -->
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
         <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            style="?buttonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent" >
+                android:id="@+id/fullscreen_content_controls"
+                style="?buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@color/black_overlay"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent">
 
             <Button
-                android:id="@+id/view_test_button"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/view_tests_label" 
-                android:textSize="20sp"
-                android:onClick="viewTestsList"
+                    android:id="@+id/view_test_button"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/view_tests_label"
+                    android:textSize="20sp"
+                    android:onClick="viewTestsList"
                     />
-            <Button
-                android:id="@+id/new_test_button"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="20sp"
-                android:text="@string/new_test_label" 
-                android:onClick="scanNewTest" />
-            
-        </LinearLayout>
-		<LinearLayout
-            android:id="@+id/fullscreen_content_controls2"
-            style="?buttonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent" >
-        <Button
-            style="?buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Directions"
-            android:textSize="20sp"
-            android:id="@+id/btnDirections"
-            android:layout_gravity="left|top"
-            android:onClick="showDirections"
-            android:singleLine="false"/>
 
-        <Button
-            style="?buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            <Button
+                    android:id="@+id/new_test_button"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp"
+                    android:text="@string/new_test_label"
+                    android:onClick="scanNewTest"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/fullscreen_content_controls2"
+                style="?buttonBarStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="About"
-                android:textSize="20sp"
-                android:id="@+id/btnAbout"
-                android:layout_gravity="right|top"
-                android:onClick="clickAbout"/>
-  		</LinearLayout>	
+                android:layout_gravity="top|center_horizontal"
+                android:background="@color/black_overlay"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent">
+
+            <Button
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Directions"
+                    android:textSize="20sp"
+                    android:id="@+id/btnDirections"
+                    android:layout_gravity="left|top"
+                    android:onClick="showDirections"
+                    android:singleLine="false"/>
+
+            <Button
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="About"
+                    android:textSize="20sp"
+                    android:id="@+id/btnAbout"
+                    android:layout_gravity="right|top"
+                    android:onClick="clickAbout"/>
+        </LinearLayout>
         <!-- <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

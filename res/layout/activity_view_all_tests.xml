@@ -1,25 +1,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:thing="http://schemas.android.com/apk/res/com.on.puz.quicktron"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    tools:context=".ViewAllTests" >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              android:orientation="vertical"
+              tools:context=".ViewAllTests">
+
     <Button
-	    android:text="@string/new_test_label"
-	    android:id="@+id/add_test_button"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:onClick="addNewTest"
+            android:text="@string/new_test_label"
+            android:id="@+id/add_test_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="addNewTest"
             android:layout_gravity="top"
             />
 
     <ListView
-        android:id="@+id/all_tests"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+            android:id="@+id/all_tests"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
 </LinearLayout>

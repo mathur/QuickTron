@@ -1,8 +1,5 @@
 package com.on.puz.quicktron;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class Test {
     private int id;
     private String testName;
@@ -12,10 +9,9 @@ public class Test {
     /*
      * Constructor that sets up a test of name null
      */
-    public Test()
-    {
-        this.testName=null;
-        this.answerKey=0;
+    public Test() {
+        this.testName = null;
+        this.answerKey = 0;
     }
 
     /*
@@ -71,7 +67,7 @@ public class Test {
      *
      * @return 0 if it is not an answer key, 1 if it is
      */
-    public int isAnswerKey(){
+    public int isAnswerKey() {
         return answerKey;
     }
 
@@ -102,7 +98,8 @@ public class Test {
     public void setScores(String newScores) {
         this.scores = newScores;
     }
-    public String toString(){
+
+    public String toString() {
         return testName;
     }
 }

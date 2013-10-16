@@ -1,64 +1,61 @@
 package com.on.puz.quicktron;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.Window;
+import android.view.WindowManager;
 
 import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.imgproc.Imgproc;
 
-import com.on.puz.quicktron.R;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.View.OnTouchListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
-    private static final String  TAG              = "OCVSample::Activity";
+    private static final String TAG = "OCVSample::Activity";
 
-    private boolean              mIsColorSelected = false;
-    private Mat                  mRgba;
-    private Scalar               mBlobColorRgba;
-    private Scalar               mBlobColorHsv;
-    private ScantronDetector 	 mDetector;
-    private Mat                  mSpectrum;
-    private Size                 SPECTRUM_SIZE;
-    private Scalar               CONTOUR_COLOR;
-    
-    protected boolean 			 pageFinished=true;
+    private boolean mIsColorSelected = false;
+    private Mat mRgba;
+    private Scalar mBlobColorRgba;
+    private Scalar mBlobColorHsv;
+    private ScantronDetector mDetector;
+    private Mat mSpectrum;
+    private Size SPECTRUM_SIZE;
+    private Scalar CONTOUR_COLOR;
+
+    protected boolean pageFinished = true;
     private CameraBridgeViewBase mOpenCvCameraView;
 
-    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
+                case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setOnTouchListener(MainActivity.this);
-                } break;
-                default:
-                {
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };
@@ -67,7 +64,9 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         Log.i(TAG, "Instantiated new " + this.getClass());
     }
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "called onCreate");
@@ -83,16 +82,14 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
     }
@@ -110,7 +107,7 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
-        CONTOUR_COLOR = new Scalar(255,0,0,255);
+        CONTOUR_COLOR = new Scalar(255, 0, 0, 255);
     }
 
     public void onCameraViewStopped() {
@@ -124,8 +121,8 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
         int xOffset = (mOpenCvCameraView.getWidth() - cols) / 2;
         int yOffset = (mOpenCvCameraView.getHeight() - rows) / 2;
 
-        int x = (int)event.getX() - xOffset;
-        int y = (int)event.getY() - yOffset;
+        int x = (int) event.getX() - xOffset;
+        int y = (int) event.getY() - yOffset;
 
         Log.i(TAG, "Touch image coordinates: (" + x + ", " + y + ")");
 
@@ -133,11 +130,11 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         Rect touchedRect = new Rect();
 
-        touchedRect.x = (x>4) ? x-4 : 0;
-        touchedRect.y = (y>4) ? y-4 : 0;
+        touchedRect.x = (x > 4) ? x - 4 : 0;
+        touchedRect.y = (y > 4) ? y - 4 : 0;
 
-        touchedRect.width = (x+4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-        touchedRect.height = (y+4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
+        touchedRect.width = (x + 4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
+        touchedRect.height = (y + 4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
 
         Mat touchedRegionRgba = mRgba.submat(touchedRect);
 
@@ -146,14 +143,14 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         // Calculate average color of touched region
         mBlobColorHsv = Core.sumElems(touchedRegionHsv);
-        int pointCount = touchedRect.width*touchedRect.height;
+        int pointCount = touchedRect.width * touchedRect.height;
         for (int i = 0; i < mBlobColorHsv.val.length; i++)
             mBlobColorHsv.val[i] /= pointCount;
 
         mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
 
         Log.i(TAG, "Touched hsv color: (" + mBlobColorHsv.val[0] + ", " + mBlobColorHsv.val[1] +
-                ", " + mBlobColorHsv.val[2]+ ")");
+                ", " + mBlobColorHsv.val[2] + ")");
 
         mDetector.setHsvColor(mBlobColorHsv);
 
@@ -176,24 +173,24 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
             MatOfPoint contour = mDetector.getContour();
             MatOfPoint orientationLine = mDetector.getOrientationLine();
             List<MatOfPoint> answerGrid = mDetector.getAnswerGrid();
-            List<MatOfPoint> blackLines = mDetector.getBlackLines(); 
+            List<MatOfPoint> blackLines = mDetector.getBlackLines();
 //            List<MatOfPoint> green = mDetector.getGreenishThings();
-            if(contour != null) {
-            	contours.add(contour);
-            	if(orientationLine != null) {
-            		contours.add(orientationLine);
-            	}
-            	if(answerGrid != null) {
-            		Imgproc.drawContours(mRgba, answerGrid, -1, new Scalar(255,255,0,255), 2);
-            	}
-            	if(blackLines != null) {
-            		Imgproc.drawContours(mRgba, blackLines, -1, new Scalar(255,255,0,255), 2);
-            	}
+            if (contour != null) {
+                contours.add(contour);
+                if (orientationLine != null) {
+                    contours.add(orientationLine);
+                }
+                if (answerGrid != null) {
+                    Imgproc.drawContours(mRgba, answerGrid, -1, new Scalar(255, 255, 0, 255), 2);
+                }
+                if (blackLines != null) {
+                    Imgproc.drawContours(mRgba, blackLines, -1, new Scalar(255, 255, 0, 255), 2);
+                }
             }
 //            Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR,2);
-            
-            
+            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 2);
+
+
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
         }
@@ -207,15 +204,15 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
         return new Scalar(pointMatRgba.get(0, 0));
     }
-    public void nextPage(View v){
-		Log.wtf("BUTTON", "button pressed");
-		mDetector.checkAnswers(getApplicationContext());
-    	if (pageFinished)
-    	{
-    		pageFinished=false;
-    		recreate();
-    		
-    	}
-    	return;
+
+    public void nextPage(View v) {
+        Log.wtf("BUTTON", "button pressed");
+        mDetector.checkAnswers(getApplicationContext());
+        if (pageFinished) {
+            pageFinished = false;
+            recreate();
+
+        }
+        return;
     }
 }

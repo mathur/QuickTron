@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.on.puz.quicktron"
-    android:versionCode="21"
-    android:versionName="2.1" >
+          package="com.on.puz.quicktron"
+          android:versionCode="21"
+          android:versionName="2.1">
 
     <application
-        android:icon="@drawable/icon"
-        android:label="@string/app_name"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-        <activity
-            android:name="com.on.puz.quicktron.MainActivity"
-            android:configChanges="keyboardHidden|orientation"
+            android:icon="@drawable/icon"
             android:label="@string/app_name"
-            android:screenOrientation="landscape" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <activity
+                android:name="com.on.puz.quicktron.MainActivity"
+                android:configChanges="keyboardHidden|orientation"
+                android:label="@string/app_name"
+                android:screenOrientation="landscape">
         </activity>
         <activity
-            android:name="com.on.puz.quicktron.LaunchScreen"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_launch_screen"
-            android:theme="@style/FullscreenTheme" >
-             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                android:name="com.on.puz.quicktron.LaunchScreen"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                android:label="@string/title_activity_launch_screen"
+                android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name="com.on.puz.quicktron.ViewAllTests"
-            android:label="@string/title_activity_view_all_tests" >
+                android:name="com.on.puz.quicktron.ViewAllTests"
+                android:label="@string/title_activity_view_all_tests">
         </activity>
         <activity
                 android:name="com.on.puz.quicktron.About"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:label="@string/title_activity_about"
-                android:theme="@style/FullscreenTheme" >
+                android:theme="@style/FullscreenTheme">
         </activity>
 
     </application>
 
     <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:resizeable="true"
-        android:smallScreens="true" />
+            android:anyDensity="true"
+            android:largeScreens="true"
+            android:normalScreens="true"
+            android:resizeable="true"
+            android:smallScreens="true"/>
 
     <uses-sdk
-        android:minSdkVersion="12"
-        android:targetSdkVersion="18" />
+            android:minSdkVersion="12"
+            android:targetSdkVersion="18"/>
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
+            android:name="android.hardware.camera"
+            android:required="false"/>
     <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
+            android:name="android.hardware.camera.autofocus"
+            android:required="false"/>
     <uses-feature
-        android:name="android.hardware.camera.front"
-        android:required="false" />
+            android:name="android.hardware.camera.front"
+            android:required="false"/>
     <uses-feature
-        android:name="android.hardware.camera.front.autofocus"
-        android:required="false" />
+            android:name="android.hardware.camera.front.autofocus"
+            android:required="false"/>
 
 </manifest>

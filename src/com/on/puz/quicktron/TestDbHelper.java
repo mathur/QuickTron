@@ -1,15 +1,12 @@
 package com.on.puz.quicktron;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
+import java.util.ArrayList;
 
 public class TestDbHelper extends SQLiteOpenHelper {
 
@@ -28,6 +25,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
     private static final String KEY_SCORES = "scores";
 
     private static TestDbHelper dbInstance = null;
+
     /*
      * Constructor that sets up the TestDbHelper object
      *
@@ -106,7 +104,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
         // open the database for writing
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String testId= "" + test.getId();
+        String testId = "" + test.getId();
         db.delete(TABLE_ITEMS, KEY_ID + "=" + testId, null);
 
         db.close();
@@ -133,8 +131,7 @@ public class TestDbHelper extends SQLiteOpenHelper {
                 test.setScores(cursor.getString(3));
                 return test;
             } while (cursor.moveToNext());
-        }
-        else{
+        } else {
             return null;
         }
     }
